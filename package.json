@@ -31,7 +31,7 @@
     "react-dom": "18.2.0",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
-    "sanity": "^5.22.0",
+    "sanity": "^3.17.0",
     "stripe": "^13.10.0",
     "styled-components": "^6.1.19",
     "swr": "^2.2.4",

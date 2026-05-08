@@ -8,7 +8,7 @@ export default defineConfig({
   title: 'hotel-management',
 
   // 🔧 COLOCA VALORES DIRETOS (não usar process.env aqui)
-  projectId: 'rlbqptu',
+  projectId: 'rlbqpbtu',
   dataset: 'production',
 
   basePath: "/studio",
