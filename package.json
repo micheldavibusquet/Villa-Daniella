@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sanity/icons": "^2.11.8",
+    "@sanity/ui": "^2.16.22",
     "@sanity/vision": "^3.17.0",
     "@stripe/stripe-js": "^2.1.7",
     "@types/node": "20.8.2",
