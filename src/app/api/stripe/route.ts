@@ -51,7 +51,10 @@ export async function POST(req: Request) {
 
     const room = await getRoom(hotelRoomSlug);
 
-    const discountPrice = room.price - (room.price / 100) * room.discount;
+    const discount = room.discount || 0;
+
+    const discountPrice =
+      room.price - (room.price / 100) * discount;
     const totalPrice = discountPrice * numberOfDays;
 
     const stripeSession = await stripe.checkout.sessions.create({
@@ -64,7 +67,7 @@ export async function POST(req: Request) {
             currency: 'usd',
             product_data: {
               name: room.name,
-              images: room.images.map((image: any) => image.url),
+              images: [],
             },
             unit_amount: Math.round(totalPrice * 100),
           },
