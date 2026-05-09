@@ -49,7 +49,12 @@ export async function POST(req: Request) {
 
   try {
 
+    
+    console.log("hotelRoomSlug:", hotelRoomSlug);
+    
     const room = await getRoom(hotelRoomSlug);
+
+    console.log("room encontrada:", room);
 
     const discount = room.discount || 0;
 
