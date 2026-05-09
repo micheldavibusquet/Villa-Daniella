@@ -87,7 +87,7 @@ export async function POST(req: Request) {
         hotelRoom: room._id,
         numberOfDays,
         user: userId,
-        discount: room.discount,
+        discount,
         totalPrice,
       },
     });
