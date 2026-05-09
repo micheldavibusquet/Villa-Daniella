@@ -29,9 +29,18 @@ export async function POST(req: Request) {
     numberOfDays,
   }: RequestData = await req.json();
 
-  if (!checkinDate || !checkoutDate || !hotelRoomSlug || !numberOfDays) {
-    return new NextResponse('Please all fields are required', { status: 400 });
-  }
+  if (
+  !checkinDate ||
+  !checkoutDate ||
+  !hotelRoomSlug ||
+  numberOfDays === undefined ||
+  numberOfDays <= 0
+) {
+  return new NextResponse(
+    'Please all fields are required',
+    { status: 400 }
+  );
+}
 
   const origin =
     req.headers.get('origin') || process.env.NEXTAUTH_URL || 'http://localhost:3000';
