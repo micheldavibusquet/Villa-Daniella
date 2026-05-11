@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { SanityAdapter } from 'next-auth-sanity';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { client } from './sanity';
+import { client, adminClient } from './sanity';
 
 console.log("GOOGLE ID:", process.env.GOOGLE_CLIENT_ID);
 
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
 
-  adapter: SanityAdapter(client as any),
+  adapter: SanityAdapter(adminClient as any),
 
   debug: process.env.NODE_ENV === 'development',
 
