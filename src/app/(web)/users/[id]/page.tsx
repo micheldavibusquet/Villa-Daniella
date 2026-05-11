@@ -83,17 +83,17 @@ const UserDetails = (props: { params: { id: string } }) => {
     error: errorGettingUserData,
   } = useSWR('/api/users', fetchUserData);
 
-  if (error || errorGettingUserData) throw new Error('Cannot fetch data');
+  if (loadingUserData || isLoading) return <LoadingSpinner />;
 
-  if (typeof userBookings === 'undefined' && !isLoading)
-    throw new Error('Cannot fetch data');
+  if (!userData) {
+    return (
+      <div className="p-10 text-center">
+        Não foi possível carregar os dados do usuário.
+      </div>
+    );
+  }
 
-  if (typeof userData === 'undefined' && !loadingUserData)
-    throw new Error('Cannot fetch data');
-
-  if (loadingUserData) return <LoadingSpinner />;
-
-  if (!userData) throw new Error('Cannot fetch data');
+  const safeBookings = userBookings || [];
 
   const avatar =
     typeof userData.image === 'string'
@@ -205,17 +205,15 @@ const UserDetails = (props: { params: { id: string } }) => {
           </nav>
 
           {currentNav === 'bookings' ? (
-            userBookings && (
-              <Table
-                bookingDetails={userBookings}
-                setRoomId={setRoomId}
-                toggleRatingModal={toggleRatingModal}
-              />
-            )
+            <Table
+              bookingDetails={safeBookings}
+              setRoomId={setRoomId}
+              toggleRatingModal={toggleRatingModal}
+            />
           ) : null}
 
           {currentNav === 'amount' ? (
-            userBookings && <Chart userBookings={userBookings} />
+            <Chart userBookings={safeBookings} />
           ) : null}
         </div>
       </div>
