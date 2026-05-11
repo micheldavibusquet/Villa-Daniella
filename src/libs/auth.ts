@@ -80,6 +80,30 @@ export const authOptions: NextAuthOptions = {
       return baseUrl;
     },
 
+    async signIn({ user, account }) {
+      if (account?.provider === 'google') {
+        const existingUser = await client.fetch(
+          `*[_type == "user" && email == $email][0]{
+            _id
+          }`,
+          { email: user.email }
+        );
+
+        if (!existingUser) {
+          await adminClient.create({
+            _type: 'user',
+            name: user.name,
+            email: user.email,
+            image: user.image || '',
+            isAdmin: false,
+            about: '',
+          });
+        }
+      }
+
+      return true;
+    },
+
     async session({ session, token }) {
       try {
         const userEmail = token?.email;
