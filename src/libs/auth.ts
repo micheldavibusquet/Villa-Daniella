@@ -1,6 +1,6 @@
 import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { SanityAdapter } from 'next-auth-sanity';
+//import { SanityAdapter } from 'next-auth-sanity';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
 import { client, adminClient } from './sanity';
@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
 
-  adapter: SanityAdapter(adminClient as any),
+  //adapter: SanityAdapter(adminClient as any),
 
   debug: process.env.NODE_ENV === 'development',
 
