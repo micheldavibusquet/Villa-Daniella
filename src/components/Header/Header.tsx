@@ -9,11 +9,21 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then(r => r.json());
 
 const Header = () => {
   const { darkTheme, setDarkTheme } = useContext(ThemeContext);
   const { data: session } = useSession();
   const router = useRouter();
+
+  const { data: userData } = useSWR(
+    session?.user ? '/api/users' : null,
+    fetcher
+  );
+
+  const profileImage = userData?.image || session?.user?.image;
 
   const handleScrollToFooter = (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -62,14 +72,14 @@ const Header = () => {
             <div className="flex items-center gap-2">
 
               <Link href={`/users/${session.user.id}`}>
-                {session.user.image ? (
+                {profileImage ? (
                   <div className="w-10 h-10 rounded-full overflow-hidden">
                     <Image
-                      src={session.user.image}
+                      src={profileImage}
                       alt={session.user.name!}
                       width={40}
                       height={40}
-                      className="object-cover"
+                      className="object-cover w-full h-full"
                     />
                   </div>
                 ) : (
@@ -88,15 +98,12 @@ const Header = () => {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              
-              {/* 👉 CORREÇÃO AQUI */}
-              <button onClick={() => router.push("/auth/signin")}>
-                <FaUserCircle className="cursor-pointer text-xl" />
-              </button>
-
-              <span className="text-xs text-gray-500">
+              <Link href="/auth/signin" className="hover:-translate-y-1 duration-300 transition-all">
+                <FaUserCircle className="text-xl" />
+              </Link>
+              <Link href="/auth/signin" className="text-sm hover:-translate-y-1 duration-300 transition-all">
                 Entrar
-              </span>
+              </Link>
             </div>
           )}
 

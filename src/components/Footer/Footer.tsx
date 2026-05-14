@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { BsFillSendFill, BsTelephoneOutbound } from 'react-icons/bs';
 import { BiMessageDetail } from 'react-icons/bi';
+import { AiOutlineInstagram } from 'react-icons/ai';
 
 const Footer = () => {
 
@@ -32,12 +33,31 @@ const Footer = () => {
 
             <div className='flex items-center'>
               <BsTelephoneOutbound />
-              <p className='ml-2'>(48) 99999-9999</p>
+              <p className='ml-2'>+55 48 3207-7255</p>
             </div>
 
             <div className='flex items-center pt-4'>
               <BiMessageDetail />
-              <p className='ml-2'>Atendimento via WhatsApp</p>
+              <a
+                href='https://wa.me/554832077255'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='ml-2 text-green-600 hover:underline font-medium'
+              >
+                Atendimento via WhatsApp
+              </a>
+            </div>
+
+            <div className='flex items-center pt-4'>
+              <AiOutlineInstagram className='text-xl text-pink-600' />
+              <a
+                href='https://www.instagram.com/villadaniellafloripa/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='ml-2 text-pink-600 hover:underline font-medium'
+              >
+                @villadaniellafloripa
+              </a>
             </div>
           </div>
 

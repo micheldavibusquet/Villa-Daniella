@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 import { authOptions } from '@/libs/auth';
+import { adminClient } from '@/libs/sanity';
 import {
   checkReviewExists,
   createReview,
@@ -65,5 +66,31 @@ export async function POST(req: Request, res: Response) {
   } catch (error: any) {
     console.log('Erro na atualização', error);
     return new NextResponse('Impossibilitado de criar avaliação', { status: 400 });
+  }
+}
+
+export async function PATCH(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return new NextResponse('Autenticação Requerida', { status: 401 });
+  }
+
+  const { imageUrl } = await req.json();
+
+  if (!imageUrl) {
+    return new NextResponse('URL da imagem não fornecida', { status: 400 });
+  }
+
+  try {
+    await adminClient
+      .patch(session.user.id)
+      .set({ image: imageUrl })
+      .commit();
+
+    return NextResponse.json({ success: true }, { status: 200 });
+  } catch (error) {
+    console.error('Erro ao atualizar imagem:', error);
+    return new NextResponse('Erro ao atualizar imagem', { status: 500 });
   }
 }

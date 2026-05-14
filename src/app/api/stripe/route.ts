@@ -75,8 +75,11 @@ export async function POST(req: Request) {
     const discountPrice =
       room.price - (room.price / 100) * discount;
 
-    const totalPrice =
-      discountPrice * numberOfDays;
+    const totalPrice = discountPrice * numberOfDays;
+
+    // Taxa de serviço de 10%
+    const serviceFee = Math.round(totalPrice * 0.10);
+    const grandTotal = totalPrice + serviceFee;
 
     const stripeSession =
       await stripe.checkout.sessions.create({
@@ -84,23 +87,34 @@ export async function POST(req: Request) {
 
         line_items: [
           {
-            quantity: 1,
+            quantity: numberOfDays,
             price_data: {
-              currency: 'usd',
+              currency: 'brl',
               product_data: {
-                name: room.name,
+                name: `${room.name} — Diária`,
+                description: `Check-in: ${formattedCheckinDate} → Check-out: ${formattedCheckoutDate}${discount ? ` (${discount}% de desconto aplicado)` : ''}`,
                 images: [],
               },
-              unit_amount: Math.round(
-                totalPrice * 100
-              ),
+              unit_amount: Math.round(discountPrice * 100),
+            },
+          },
+          {
+            quantity: 1,
+            price_data: {
+              currency: 'brl',
+              product_data: {
+                name: 'Taxa de serviço',
+                description: '10% sobre o valor das diárias',
+                images: [],
+              },
+              unit_amount: serviceFee * 100,
             },
           },
         ],
 
         payment_method_types: ['card'],
 
-        success_url: `${origin}/users/${userId}`,
+        success_url: `${origin}/booking/confirm?session_id={CHECKOUT_SESSION_ID}&userId=${userId}`,
         cancel_url: `${origin}/rooms`,
 
         metadata: {
@@ -112,7 +126,7 @@ export async function POST(req: Request) {
           numberOfDays,
           user: userId,
           discount,
-          totalPrice,
+          totalPrice: grandTotal,
         },
       });
 

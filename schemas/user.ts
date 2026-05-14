@@ -50,6 +50,12 @@ const user = {
     }),
 
     defineField({
+      name: 'phone',
+      title: 'Telefone',
+      type: 'string',
+    }),
+
+    defineField({
       name: 'about',
       title: 'About',
       type: 'text',

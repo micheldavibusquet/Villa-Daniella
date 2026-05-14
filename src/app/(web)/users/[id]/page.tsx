@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt, FaUserCircle, FaCamera } from 'react-icons/fa';
 import Image from 'next/image';
 import axios from 'axios';
 import { signOut } from 'next-auth/react';
@@ -9,7 +9,7 @@ import { signOut } from 'next-auth/react';
 import { getUserBookings } from '@/libs/apis';
 import { User } from '@/models/user';
 import LoadingSpinner from '../../loading';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BsJournalBookmarkFill } from 'react-icons/bs';
 import { GiMoneyStack } from 'react-icons/gi';
 import Table from '@/components/Table/Table';
@@ -31,15 +31,44 @@ const UserDetails = (props: { params: { id: string } }) => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [ratingValue, setRatingValue] = useState<number | null>(0);
   const [ratingText, setRatingText] = useState('');
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/users/upload-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Falha no upload');
+
+      const { imageUrl } = await res.json();
+      setUploadedImage(imageUrl);
+      toast.success('Foto atualizada com sucesso!');
+    } catch {
+      toast.error('Erro ao atualizar foto');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   const toggleRatingModal = () => setIsRatingVisible(prevState => !prevState);
 
   const reviewSubmitHandler = async () => {
     if (!ratingText.trim().length || !ratingValue) {
-      return toast.error('Please provide a rating text and a rating');
+      return toast.error('Preencha o texto e a nota da avaliação');
     }
 
-    if (!roomId) toast.error('Id not provided');
+    if (!roomId) toast.error('ID do quarto não encontrado');
 
     setIsSubmittingReview(true);
 
@@ -51,10 +80,10 @@ const UserDetails = (props: { params: { id: string } }) => {
       });
 
       console.log(data);
-      toast.success('Review Submitted');
+      toast.success('Avaliação enviada com sucesso!');
     } catch (error) {
       console.log(error);
-      toast.error('Review Failed');
+      toast.error('Falha ao enviar avaliação');
     } finally {
       setRatingText('');
       setRatingValue(null);
@@ -95,28 +124,56 @@ const UserDetails = (props: { params: { id: string } }) => {
 
   const safeBookings = userBookings || [];
 
-  const avatar =
-    typeof userData.image === 'string'
-      ? userData.image
-      : '/images/avatar.png';
+  const avatarSrc = uploadedImage || (typeof userData.image === 'string' && userData.image ? userData.image : null);
+
+  const AvatarDisplay = ({ size }: { size: number }) => (
+    <div
+      className='relative mx-auto mb-5 rounded-full overflow-hidden cursor-pointer group'
+      style={{ width: size, height: size }}
+      onClick={() => fileInputRef.current?.click()}
+      title='Clique para trocar a foto'
+    >
+      {avatarSrc ? (
+        <Image
+          src={avatarSrc}
+          alt={userData.name || 'User'}
+          width={size}
+          height={size}
+          className='object-cover w-full h-full rounded-full scale-animation'
+        />
+      ) : (
+        <FaUserCircle className='w-full h-full text-gray-400' style={{ width: size, height: size }} />
+      )}
+
+      {/* overlay ao hover */}
+      <div className='absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+        {isUploadingImage ? (
+          <span className='text-white text-xs'>Enviando...</span>
+        ) : (
+          <FaCamera className='text-white text-2xl' />
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className='container mx-auto px-2 md:px-4 py-10'>
+      {/* Input de arquivo oculto */}
+      <input
+        ref={fileInputRef}
+        type='file'
+        accept='image/*'
+        className='hidden'
+        onChange={handleImageUpload}
+      />
+
       <div className='grid md:grid-cols-12 gap-10'>
 
         <div className='hidden md:block md:col-span-4 lg:col-span-3 shadow-lg h-fit sticky top-10 bg-[#eff0f2] text-black rounded-lg px-6 py-4'>
-          <div className='md:w-[143px] w-28 h-28 md:h-[143px] mx-auto mb-5 rounded-full overflow-hidden'>
-            <Image
-              src={avatar}
-              alt={userData.name || 'User'}
-              width={143}
-              height={143}
-              className='img scale-animation rounded-full'
-            />
-          </div>
+          <AvatarDisplay size={143} />
 
           <div className='font-normal py-4 text-left'>
-            <h6 className='text-xl font-bold pb-3'>About</h6>
+            <h6 className='text-xl font-bold pb-3'>Sobre</h6>
             <p className='text-sm'>{userData.about ?? ''}</p>
           </div>
 
@@ -125,7 +182,7 @@ const UserDetails = (props: { params: { id: string } }) => {
           </div>
 
           <div className='flex items-center'>
-            <p className='mr-2'>Sign Out</p>
+            <p className='mr-2'>Sair</p>
             <FaSignOutAlt
               className='text-3xl cursor-pointer'
               onClick={() => signOut({ callbackUrl: '/' })}
@@ -136,18 +193,12 @@ const UserDetails = (props: { params: { id: string } }) => {
         <div className='md:col-span-8 lg:col-span-9'>
           <div className='flex items-center'>
             <h5 className='text-2xl font-bold mr-3'>
-              Hello, {userData.name}
+              Olá, {userData.name}
             </h5>
           </div>
 
-          <div className='md:hidden w-14 h-14 rounded-l-full overflow-hidden'>
-            <Image
-              className='img scale-animation rounded-full'
-              width={56}
-              height={56}
-              src={avatar}
-              alt='User'
-            />
+          <div className='md:hidden mb-3'>
+            <AvatarDisplay size={56} />
           </div>
 
           <p className='block w-fit md:hidden text-sm py-2'>
@@ -155,11 +206,11 @@ const UserDetails = (props: { params: { id: string } }) => {
           </p>
 
           <p className='text-xs py-2 font-medium'>
-            Joined In {userData._createdAt.split('T')[0]}
+            Membro desde {userData._createdAt.split('T')[0]}
           </p>
 
           <div className='md:hidden flex items-center my-2'>
-            <p className='mr-2'>Sign out</p>
+            <p className='mr-2'>Sair</p>
             <FaSignOutAlt
               className='text-3xl cursor-pointer'
               onClick={() => signOut({ callbackUrl: '/' })}
@@ -180,7 +231,7 @@ const UserDetails = (props: { params: { id: string } }) => {
               >
                 <BsJournalBookmarkFill />
                 <a className='inline-flex items-center mx-1 md:mx-3 text-xs md:text-sm font-medium'>
-                  Current Bookings
+                  Reservas Atuais
                 </a>
               </li>
             </ol>
@@ -198,7 +249,7 @@ const UserDetails = (props: { params: { id: string } }) => {
               >
                 <GiMoneyStack />
                 <a className='inline-flex items-center mx-1 md:mx-3 text-xs md:text-sm font-medium'>
-                  Amount Spent
+                  Valor Gasto
                 </a>
               </li>
             </ol>

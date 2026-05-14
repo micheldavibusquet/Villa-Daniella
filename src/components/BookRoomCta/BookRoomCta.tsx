@@ -55,6 +55,7 @@ const BookRoomCta: FC<Props> = props => {
   return (
     <div className='px-7 py-6'>
       <h3>
+        <span className='text-sm text-gray-500 block mb-1'>Valor da diária</span>
         <span
           className={`${discount ? 'text-gray-400' : ''} font-bold text-xl`}
         >
@@ -90,7 +91,7 @@ const BookRoomCta: FC<Props> = props => {
             minDate={new Date()}
             excludeDates={bookedDates}
             id='check-in-date'
-            className='bg-[#a0a0a0] w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
+            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
           />
         </div>
 
@@ -110,7 +111,7 @@ const BookRoomCta: FC<Props> = props => {
             minDate={calcMinCheckoutDate()}
             excludeDates={bookedDates}
             id='check-out-date'
-            className='bg-[#a0a0a0] w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
+            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
           />
         </div>
       </div>
@@ -131,7 +132,7 @@ const BookRoomCta: FC<Props> = props => {
             onChange={e => setAdults(+e.target.value)}
             min={1}
             max={5}
-            className='bg-[#a0a0a0] w-full border border-gray-300 rounded-lg p-2.5'
+            className='w-full border border-gray-300 rounded-lg p-2.5'
           />
         </div>
 
@@ -150,15 +151,16 @@ const BookRoomCta: FC<Props> = props => {
             onChange={e => setNoOfChildren(+e.target.value)}
             min={0}
             max={3}
-            className='bg-[#a0a0a0] w-full border border-gray-300 rounded-lg p-2.5'
+            className='w-full border border-gray-300 rounded-lg p-2.5'
           />
         </div>
       </div>
 
       {calcNoOfDays() > 0 && (
-        <p className='mt-3'>
-          Valor total R$ {calcNoOfDays() * discountPrice}
-        </p>
+        <div className='mt-4 px-4 py-3 bg-[#46220f] text-white rounded-lg flex justify-between items-center'>
+          <span className='text-sm font-medium'>Valor total</span>
+          <span className='text-xl font-bold'>R$ {calcNoOfDays() * discountPrice}</span>
+        </div>
       )}
 
       <button

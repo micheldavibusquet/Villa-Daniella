@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import { client } from "@/libs/sanity";
+import { adminClient } from "@/libs/sanity";
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, name, phone } = await req.json();
 
     // validação básica
-    if (!email || !password) {
+    if (!email || !password || !name) {
       return new NextResponse("Dados inválidos", { status: 400 });
     }
 
     // 🔍 verifica se já existe
-    const existingUser = await client.fetch(
+    const existingUser = await adminClient.fetch(
       `*[_type == "user" && email == $email][0]`,
       { email }
     );
@@ -21,11 +21,12 @@ export async function POST(req: Request) {
     }
 
     // 🧑 cria usuário
-    const newUser = await client.create({
+    const newUser = await adminClient.create({
       _type: "user",
-      name: name || email.split("@")[0],
+      name,
       email,
       password,
+      ...(phone ? { phone } : {}),
     });
 
     return NextResponse.json(newUser, { status: 201 });
