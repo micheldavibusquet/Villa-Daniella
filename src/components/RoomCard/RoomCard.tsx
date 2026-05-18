@@ -29,63 +29,60 @@ const RoomCard: FC<Props> = ({ room }) => {
   const secondImage = images?.[0]?.url;
 
   return (
-    <div className="rounded-xl w-72 mb-10 mx-auto md:mx-0 overflow-hidden text-black bg-white shadow-sm">
-
+    <div className='rounded-xl w-72 mb-10 mx-auto md:mx-0 overflow-hidden text-black bg-white shadow-sm flex flex-col'>
       {/* FOTO COM HOVER */}
       <Link href={`/rooms/${slug.current}`}>
-        <div className="h-60 overflow-hidden relative group cursor-pointer">
-
+        <div className='h-60 overflow-hidden relative group cursor-pointer'>
           {/* IMAGEM PRINCIPAL */}
           <Image
-            src={coverImage?.url || "/placeholder.jpg"}
+            src={coverImage?.url || '/placeholder.jpg'}
             alt={name}
             width={400}
             height={300}
-            className="w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0"
+            className='w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0'
           />
 
           {/* SEGUNDA IMAGEM */}
           {secondImage && (
             <Image
               src={secondImage}
-              alt="segunda foto"
+              alt='segunda foto'
               width={400}
               height={300}
-              className="w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              className='w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
             />
           )}
-
         </div>
       </Link>
 
-      <div className="p-4">
+      <div className='p-4 flex flex-col flex-1'>
         {/* NOME + PREÇO */}
-        <div className="flex justify-between text-xl font-semibold">
+        <div className='flex justify-between text-xl font-semibold'>
           <p>{name}</p>
           <p>R$ {price}</p>
         </div>
 
         {/* TIPO + CAMAS + TAMANHO */}
-        <p className="pt-2 text-xs text-gray-600">
+        <p className='pt-2 text-xs text-gray-600'>
           {roomTypeLabels[type] || type}
-          {numberOfBeds && ` • ${numberOfBeds} cama${numberOfBeds > 1 ? 's' : ''}`}
-          {dimension && ` • ${dimension}`}
+          {numberOfBeds &&
+            ` • ${numberOfBeds} cama${numberOfBeds > 1 ? 's' : ''}`}
+          {dimension && ` • ${dimension}m²`}
         </p>
 
         {/* DESCRIÇÃO */}
-        <p className="pt-3 pb-6 text-sm">
+        <p className='pt-3 pb-6 text-sm flex-1'>
           {description?.slice(0, 100)}...
         </p>
 
         {/* BOTÃO RESERVAR */}
         <Link
           href={`/rooms/${slug.current}`}
-          className="bg-primary inline-block text-center w-full py-4 rounded-xl text-white text-xl font-bold hover:-translate-y-1 hover:shadow-lg transition-all duration-300"
+          className='bg-primary inline-block text-center w-full py-4 rounded-xl text-white text-xl font-bold hover:-translate-y-1 hover:shadow-lg transition-all duration-300 mt-auto'
         >
           RESERVAR
         </Link>
       </div>
-
     </div>
   );
 };
