@@ -33,12 +33,10 @@ export default function RoomsPage() {
   // FILTRO COMPLETO:
   // tipo + capacidade + faixa de preço
   const filteredRooms = rooms.filter((room) => {
-    const matchesType =
-      roomType === 'all' || room.type === roomType;
+    const matchesType = roomType === 'all' || room.type === roomType;
 
     const matchesCapacity =
-      capacity === 'all' ||
-      (room.numberOfBeds ?? 0) >= Number(capacity);
+      capacity === 'all' || (room.numberOfBeds ?? 0) >= Number(capacity);
 
     const matchesPrice =
       (minPrice ? room.price >= Number(minPrice) : true) &&
@@ -48,22 +46,17 @@ export default function RoomsPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-
-      <h1 className="text-2xl font-semibold mb-6">
-        Acomodações
-      </h1>
+    <div className='max-w-7xl mx-auto px-4 py-8'>
+      <h1 className='text-2xl font-semibold mb-6'>Acomodações</h1>
 
       {filteredRooms.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
           {filteredRooms.map((room) => (
             <RoomCard key={room._id} room={room} />
           ))}
-
         </div>
       ) : (
-        <p className="text-center py-10 text-gray-500">
+        <p className='text-center py-10 text-gray-500'>
           Nenhuma acomodação encontrada.
         </p>
       )}

@@ -75,6 +75,8 @@ const BookRoomCta: FC<Props> = props => {
 
       <h4 className='my-8'>{specialNote}</h4>
 
+      <p className='text-xs text-gray-500 mb-2'>Mínimo de 2 diárias</p>
+
       <div className='flex'>
         <div className='w-1/2 pr-2'>
           <label

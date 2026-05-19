@@ -42,9 +42,9 @@ const RoomDetails = (props: { params: { slug: string } }) => {
 
   const calcMinCheckoutDate = () => {
     if (checkinDate) {
-      const nextDay = new Date(checkinDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      return nextDay;
+      const minDate = new Date(checkinDate);
+      minDate.setDate(minDate.getDate() + 2);
+      return minDate;
     }
     return null;
   };
@@ -65,6 +65,9 @@ const RoomDetails = (props: { params: { slug: string } }) => {
       return toast.error('Data de checkout inválida');
 
     const numberOfDays = calcNumDays();
+
+    if (numberOfDays < 2)
+      return toast.error('Mínimo de 2 diárias');
 
     try {
       const stripe = await getStripe();
