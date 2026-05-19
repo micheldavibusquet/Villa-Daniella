@@ -39,19 +39,11 @@ const RoomCard: FC<Props> = ({ room }) => {
             alt={name}
             width={400}
             height={300}
-            className='w-full h-full object-cover transition-opacity duration-300 group-hover:opacity-0'
+            className='w-full h-full object-cover transition-transform duration-300 group-hover:scale-105'
           />
 
-          {/* SEGUNDA IMAGEM */}
-          {secondImage && (
-            <Image
-              src={secondImage}
-              alt='segunda foto'
-              width={400}
-              height={300}
-              className='w-full h-full object-cover absolute top-0 left-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300'
-            />
-          )}
+          {/* OVERLAY ESCURO NO HOVER */}
+          <div className='absolute inset-0 bg-black opacity-0 group-hover:opacity-30 transition-opacity duration-300' />
         </div>
       </Link>
 
