@@ -28,23 +28,24 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
 
   return (
     <div className="container mx-auto">
+      <div className="w-[85%] mx-auto">
 
-      {/* FOTO PRINCIPAL */}
-      <div
-        className="w-full h-[520px] overflow-hidden rounded-xl mb-4 cursor-pointer"
-        onClick={() => setSelectedIndex(0)}
-      >
-        <Image
-          src={getUrl(photos[0])}
-          alt="Foto principal"
-          width={1200}
-          height={800}
-          className="w-full h-full object-cover"
-        />
-      </div>
+        {/* FOTO PRINCIPAL */}
+        <div
+          className="w-[calc(100%-20px)] h-[480px] overflow-hidden rounded-xl mb-4 cursor-pointer"
+          onClick={() => setSelectedIndex(0)}
+        >
+          <Image
+            src={getUrl(photos[0])}
+            alt="Foto principal"
+            width={1200}
+            height={800}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
-      {/* MINIATURAS */}
-      <div className="flex gap-3 flex-wrap">
+        {/* MINIATURAS */}
+        <div className="flex gap-3 flex-wrap">
         {photos.map((photo, index) => (
           <div
             key={index}
@@ -60,6 +61,8 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
             />
           </div>
         ))}
+        </div>
+
       </div>
 
       {/* MODAL COM NAVEGAÇÃO */}
