@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import { getRoom } from '@/libs/apis';
 import HotelPhotoGallery from '@/components/HotelPhotoGallery/HotelPhotoGallery';
@@ -15,6 +17,9 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   const {
     params: { slug },
   } = props;
+
+  const { status } = useSession();
+  const router = useRouter();
 
   const [room, setRoom] = useState<Room | null>(null);
   const [error, setError] = useState(false);
@@ -56,6 +61,11 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   };
 
   const handleBookNowClick = async () => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+
     if (!room) return;
 
     if (!checkinDate || !checkoutDate)
