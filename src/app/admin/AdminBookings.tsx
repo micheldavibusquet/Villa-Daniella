@@ -28,7 +28,7 @@ export default function AdminBookings() {
   async function fetchBookings() {
     try {
       setLoading(true);
-      const { data } = await axios.get('/api/room-bookings');
+      const { data } = await axios.get('/api/admin/bookings');
       setBookings(data);
     } catch {
       console.error('Erro ao carregar reservas');
