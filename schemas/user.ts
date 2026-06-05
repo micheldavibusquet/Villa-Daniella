@@ -11,7 +11,7 @@ const user = {
       type: 'boolean',
       description: 'Check if the user is admin',
       initialValue: false,
-      validation: Rule => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
@@ -20,7 +20,7 @@ const user = {
       type: 'string',
       description: 'Name of the user',
       readOnly: true,
-      validation: Rule => Rule
+      validation: (Rule) => Rule,
     }),
 
     defineField({
@@ -40,7 +40,7 @@ const user = {
       type: 'string',
       title: 'Email',
       // 🔧 Agora obrigatório
-      validation: Rule => Rule.required(),
+      validation: (Rule) => Rule.required(),
     }),
 
     defineField({
