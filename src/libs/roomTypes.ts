@@ -15,6 +15,7 @@ export const ROOM_TYPES = [
   { value: 'suite', label: 'Suíte' },
   { value: 'quarto_compartilhado', label: 'Quarto Compartilhado' },
   { value: 'cabana', label: 'Cabana' },
+  { value: 'apartamento', label: 'Apartamento' },
   { value: 'personalizado', label: 'Personalizado...' },
 ];
 
