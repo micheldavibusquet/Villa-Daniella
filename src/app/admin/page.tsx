@@ -6,25 +6,219 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminRooms from './AdminRooms';
 import AdminBookings from './AdminBookings';
+import AdminUsers from './AdminUsers';
 
-type Tab = 'dashboard' | 'rooms' | 'bookings';
+/**
+ * Tipos de abas disponíveis no painel.
+ * A aba 'users' só é exibida para Super Admin.
+ */
+type Tab = 'dashboard' | 'rooms' | 'bookings' | 'users';
 
-// Tipos de estatísticas exibidas na Visão Geral do painel
+/**
+ * Roles disponíveis no sistema (RBAC).
+ * - superAdmin: acesso total + gerencia usuários
+ * - admin: gerencia acomodações e reservas
+ * - viewer: somente visualização
+ */
+type Role = 'superAdmin' | 'admin' | 'viewer';
+
+/** Estatísticas exibidas na Visão Geral do painel */
 type Stats = {
   totalRooms: number;
   confirmedBookings: number;
   pendingBookings: number;
-  totalReviews: number;
   occupancyRate: number;
+  totalReviews: number;
 };
+
+/** Labels exibidos no sidebar para cada role */
+const ROLE_LABELS: Record<Role, string> = {
+  superAdmin: 'Super Administrador',
+  admin: 'Administrador',
+  viewer: 'Visualizacao',
+};
+
+export default function AdminPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [authState, setAuthState] = useState<'checking' | 'allowed' | 'denied'>(
+    'checking',
+  );
+
+  // Role e ID do usuário logado — usados para controle de acesso
+  const [userRole, setUserRole] = useState<Role>('viewer');
+  const [currentUserId, setCurrentUserId] = useState<string>('');
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session?.user?.email) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    // Busca os dados do usuário logado incluindo role
+    axios
+      .get(`/api/users?email=${encodeURIComponent(session.user.email)}`)
+      .then(({ data }) => {
+        if (data?.isAdmin === true) {
+          setAuthState('allowed');
+          // Define o role: usa o campo role se disponível,
+          // caso contrário trata como admin por compatibilidade
+          setUserRole(data.role ?? 'admin');
+          setCurrentUserId(data._id ?? '');
+        } else {
+          setAuthState('denied');
+          setTimeout(() => router.push('/'), 2500);
+        }
+      })
+      .catch(() => {
+        setAuthState('denied');
+        setTimeout(() => router.push('/'), 2500);
+      });
+  }, [session, status, router]);
+
+  if (status === 'loading' || authState === 'checking') {
+    return (
+      <div style={styles.loadingContainer}>
+        <div style={styles.spinnerRing} />
+        <p style={styles.loadingText}>Verificando credenciais...</p>
+      </div>
+    );
+  }
+
+  if (authState === 'denied') {
+    return (
+      <div style={styles.loadingContainer}>
+        <span style={styles.deniedIcon}>X</span>
+        <p style={styles.deniedTitle}>Acesso Negado</p>
+        <p style={styles.loadingText}>
+          Voce nao tem permissao de administrador.
+        </p>
+        <p style={styles.redirectText}>Redirecionando...</p>
+      </div>
+    );
+  }
+
+  // Abas disponíveis — Usuários só aparece para Super Admin
+  const tabs: { id: Tab; label: string; icon: string }[] = [
+    { id: 'dashboard', label: 'Visao Geral', icon: '#' },
+    { id: 'rooms', label: 'Acomodacoes', icon: '[]' },
+    { id: 'bookings', label: 'Reservas', icon: '<>' },
+    ...(userRole === 'superAdmin'
+      ? [{ id: 'users' as Tab, label: 'Usuarios', icon: '@' }]
+      : []),
+  ];
+
+  return (
+    <div style={styles.container}>
+      <aside style={styles.sidebar}>
+        <div style={styles.sidebarHeader}>
+          <div style={styles.logo}>
+            <span style={styles.logoIcon}>*</span>
+            <span style={styles.logoText}>VILLA</span>
+          </div>
+          <p style={styles.logoSub}>Painel Administrativo</p>
+        </div>
+
+        <nav style={styles.nav}>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              style={{
+                ...styles.navItem,
+                ...(activeTab === tab.id ? styles.navItemActive : {}),
+              }}
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <span style={styles.navIcon}>{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* Box informativo — conteúdo varia conforme o role */}
+        {userRole === 'superAdmin' && (
+          <div style={styles.adminPromoBox}>
+            <p style={styles.adminPromoTitle}>Gerenciar Usuarios</p>
+            <p style={styles.adminPromoText}>
+              Acesse a aba{' '}
+              <strong style={{ color: '#b8a06a' }}>Usuarios</strong> para
+              alterar perfis de acesso sem precisar do Sanity Studio.
+            </p>
+          </div>
+        )}
+
+        {/* Viewer vê aviso de acesso limitado */}
+        {userRole === 'viewer' && (
+          <div style={{ ...styles.adminPromoBox, borderColor: '#3a3060' }}>
+            <p style={{ ...styles.adminPromoTitle, color: '#6a8fb8' }}>
+              Acesso Limitado
+            </p>
+            <p style={styles.adminPromoText}>
+              Voce tem permissao somente de visualizacao. Contate um
+              administrador para obter acesso de edicao.
+            </p>
+          </div>
+        )}
+
+        <div style={styles.sidebarFooter}>
+          <div style={styles.userInfo}>
+            <div style={styles.userAvatar}>
+              {session?.user?.name?.charAt(0).toUpperCase() ?? 'A'}
+            </div>
+            <div>
+              <p style={styles.userName}>{session?.user?.name ?? 'Admin'}</p>
+              {/* Exibe o role atual do usuário logado */}
+              <p style={styles.userRole}>{ROLE_LABELS[userRole]}</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main style={styles.main}>
+        <header style={styles.topBar}>
+          <h1 style={styles.pageTitle}>
+            {tabs.find((t) => t.id === activeTab)?.label}
+          </h1>
+          <span style={styles.dateBadge}>
+            {new Date().toLocaleDateString('pt-BR', {
+              weekday: 'long',
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </span>
+        </header>
+
+        <div style={styles.content}>
+          {activeTab === 'dashboard' && <DashboardOverview />}
+
+          {/* Passa readOnly=true para Viewer — bloqueia ações de edição */}
+          {activeTab === 'rooms' && (
+            <AdminRooms readOnly={userRole === 'viewer'} />
+          )}
+          {activeTab === 'bookings' && (
+            <AdminBookings readOnly={userRole === 'viewer'} />
+          )}
+
+          {/* Aba de usuários — exclusiva para Super Admin */}
+          {activeTab === 'users' && userRole === 'superAdmin' && (
+            <AdminUsers currentUserId={currentUserId} />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
 
 function DashboardOverview() {
   const [stats, setStats] = useState<Stats>({
     totalRooms: 0,
     confirmedBookings: 0,
     pendingBookings: 0,
-    totalReviews: 0,
     occupancyRate: 0,
+    totalReviews: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -112,7 +306,9 @@ function DashboardOverview() {
 
   return (
     <div>
-      <div style={styles.statsGrid}>
+      <div
+        style={{ ...styles.statsGrid, gridTemplateColumns: 'repeat(5, 1fr)' }}
+      >
         {statCards.map((stat) => (
           <div key={stat.label} style={styles.statCard}>
             <div>
@@ -130,8 +326,8 @@ function DashboardOverview() {
         <h2 style={styles.welcomeTitle}>Bem-vindo ao Painel</h2>
         <p style={styles.welcomeText}>
           Use o menu lateral para gerenciar <strong>acomodacoes</strong> e{' '}
-          <strong>reservas</strong>. Para conceder acesso de administrador a
-          outro usuario, use o atalho no menu lateral.
+          <strong>reservas</strong>. Super Administradores tambem podem
+          gerenciar <strong>usuarios</strong> e perfis de acesso.
         </p>
 
         <div style={styles.howToBox}>
@@ -139,161 +335,16 @@ function DashboardOverview() {
           <ol style={styles.howToList}>
             <li>O usuario deve criar uma conta normalmente no site</li>
             <li>
-              Acesse{' '}
-              <a
-                href='/studio'
-                style={styles.link}
-                target='_blank'
-                rel='noreferrer'
-              >
-                /studio
-              </a>{' '}
-              e va em <strong>User</strong>
+              Acesse a aba{' '}
+              <strong style={{ color: '#b8a06a' }}>Usuarios</strong> no menu
+              lateral (visivel apenas para Super Admin)
             </li>
-            <li>Encontre o usuario pelo nome ou e-mail</li>
-            <li>
-              Marque o campo{' '}
-              <strong style={{ color: '#b8a06a' }}>Administrador</strong> como{' '}
-              <strong>verdadeiro</strong>
-            </li>
-            <li>Clique em Publicar - o acesso e imediato</li>
+            <li>Encontre o usuario pelo nome ou e-mail na tabela</li>
+            <li>Selecione o novo perfil de acesso no seletor da linha</li>
+            <li>A alteracao e salva automaticamente</li>
           </ol>
         </div>
       </div>
-    </div>
-  );
-}
-
-export default function AdminPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-  const [authState, setAuthState] = useState<'checking' | 'allowed' | 'denied'>(
-    'checking',
-  );
-
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session?.user?.email) {
-      router.push('/auth/signin');
-      return;
-    }
-    axios
-      .get(`/api/users?email=${encodeURIComponent(session.user.email)}`)
-      .then(({ data }) => {
-        if (data?.isAdmin === true) {
-          setAuthState('allowed');
-        } else {
-          setAuthState('denied');
-          setTimeout(() => router.push('/'), 2500);
-        }
-      })
-      .catch(() => {
-        setAuthState('denied');
-        setTimeout(() => router.push('/'), 2500);
-      });
-  }, [session, status, router]);
-
-  if (status === 'loading' || authState === 'checking') {
-    return (
-      <div style={styles.loadingContainer}>
-        <div style={styles.spinnerRing} />
-        <p style={styles.loadingText}>Verificando credenciais...</p>
-      </div>
-    );
-  }
-
-  if (authState === 'denied') {
-    return (
-      <div style={styles.loadingContainer}>
-        <span style={styles.deniedIcon}>X</span>
-        <p style={styles.deniedTitle}>Acesso Negado</p>
-        <p style={styles.loadingText}>
-          Voce nao tem permissao de administrador.
-        </p>
-        <p style={styles.redirectText}>Redirecionando...</p>
-      </div>
-    );
-  }
-
-  const tabs: { id: Tab; label: string; icon: string }[] = [
-    { id: 'dashboard', label: 'Visao Geral', icon: '#' },
-    { id: 'rooms', label: 'Acomodacoes', icon: '[]' },
-    { id: 'bookings', label: 'Reservas', icon: '<>' },
-  ];
-
-  return (
-    <div style={styles.container}>
-      <aside style={styles.sidebar}>
-        <div style={styles.sidebarHeader}>
-          <div style={styles.logo}>
-            <span style={styles.logoIcon}>*</span>
-            <span style={styles.logoText}>VILLA</span>
-          </div>
-          <p style={styles.logoSub}>Painel Administrativo</p>
-        </div>
-        <nav style={styles.nav}>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              style={{
-                ...styles.navItem,
-                ...(activeTab === tab.id ? styles.navItemActive : {}),
-              }}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <span style={styles.navIcon}>{tab.icon}</span>
-              <span>{tab.label}</span>
-            </button>
-          ))}
-        </nav>
-        <div style={styles.adminPromoBox}>
-          <p style={styles.adminPromoTitle}>Promover Administrador</p>
-          <p style={styles.adminPromoText}>
-            Acesse o Sanity Studio, encontre o usuario e marque{' '}
-            <strong style={{ color: '#b8a06a' }}>Administrador = true</strong>.
-          </p>
-          <a
-            href='/studio'
-            target='_blank'
-            rel='noreferrer'
-            style={styles.adminPromoLink}
-          >
-            Abrir Sanity Studio
-          </a>
-        </div>
-        <div style={styles.sidebarFooter}>
-          <div style={styles.userInfo}>
-            <div style={styles.userAvatar}>
-              {session?.user?.name?.charAt(0).toUpperCase() ?? 'A'}
-            </div>
-            <div>
-              <p style={styles.userName}>{session?.user?.name ?? 'Admin'}</p>
-              <p style={styles.userRole}>Administrador</p>
-            </div>
-          </div>
-        </div>
-      </aside>
-      <main style={styles.main}>
-        <header style={styles.topBar}>
-          <h1 style={styles.pageTitle}>
-            {tabs.find((t) => t.id === activeTab)?.label}
-          </h1>
-          <span style={styles.dateBadge}>
-            {new Date().toLocaleDateString('pt-BR', {
-              weekday: 'long',
-              day: '2-digit',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </span>
-        </header>
-        <div style={styles.content}>
-          {activeTab === 'dashboard' && <DashboardOverview />}
-          {activeTab === 'rooms' && <AdminRooms />}
-          {activeTab === 'bookings' && <AdminBookings />}
-        </div>
-      </main>
     </div>
   );
 }
@@ -385,13 +436,8 @@ const styles: Record<string, React.CSSProperties> = {
   adminPromoText: {
     fontSize: '11px',
     color: '#6b6355',
-    margin: '0 0 10px 0',
+    margin: '0',
     lineHeight: '1.6',
-  },
-  adminPromoLink: {
-    fontSize: '11px',
-    color: '#6a8fb8',
-    textDecoration: 'none',
   },
   sidebarFooter: {
     padding: '20px 24px',
@@ -447,7 +493,6 @@ const styles: Record<string, React.CSSProperties> = {
   content: { padding: '32px', flex: 1 },
   statsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '16px',
     marginBottom: '32px',
   },
@@ -473,11 +518,7 @@ const styles: Record<string, React.CSSProperties> = {
     margin: '0 0 2px 0',
     fontWeight: '600',
   },
-  statDesc: {
-    fontSize: '11px',
-    color: '#4a4540',
-    margin: 0,
-  },
+  statDesc: { fontSize: '11px', color: '#4a4540', margin: 0 },
   welcomeCard: {
     backgroundColor: '#1a1814',
     border: '1px solid #2e2a22',
@@ -516,7 +557,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '13px',
     lineHeight: '2',
   },
-  link: { color: '#b8a06a', textDecoration: 'none' },
   loadingContainer: {
     minHeight: '100vh',
     display: 'flex',

@@ -44,7 +44,11 @@ const emptyForm: RoomForm = {
   numberOfBeds: '',
 };
 
-export default function AdminRooms() {
+export default function AdminRooms({
+  readOnly = false,
+}: {
+  readOnly?: boolean;
+}) {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -310,7 +314,7 @@ export default function AdminRooms() {
           <h2 style={s.sectionTitle}>Acomodacoes</h2>
           <p style={s.sectionSub}>RF1 - Cadastro e gerenciamento de quartos</p>
         </div>
-        {!editingRoom && (
+        {!editingRoom && !readOnly && (
           <button
             style={s.btnPrimary}
             onClick={() => {
@@ -346,6 +350,13 @@ export default function AdminRooms() {
           }}
         >
           {feedback.msg}
+        </div>
+      )}
+
+      {readOnly && (
+        <div style={s.readOnlyBanner}>
+          Voce esta em modo de visualizacao. Contate um administrador para
+          editar acomodacoes.
         </div>
       )}
 
@@ -842,9 +853,18 @@ export default function AdminRooms() {
                       </span>
                     </td>
                     <td style={s.td}>
-                      <button style={s.editBtn} onClick={() => openEdit(room)}>
-                        Editar acomodacao
-                      </button>
+                      {!readOnly ? (
+                        <button
+                          style={s.editBtn}
+                          onClick={() => openEdit(room)}
+                        >
+                          Editar acomodacao
+                        </button>
+                      ) : (
+                        <span style={{ color: '#4a4540', fontSize: '12px' }}>
+                          Sem permissao
+                        </span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -1257,5 +1277,14 @@ const s: Record<string, React.CSSProperties> = {
     textAlign: 'center' as const,
     color: '#4a4540',
     fontSize: '14px',
+  },
+  readOnlyBanner: {
+    backgroundColor: '#1a1c2e',
+    border: '1px solid #3a3060',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    fontSize: '13px',
+    color: '#6a8fb8',
+    marginBottom: '20px',
   },
 };

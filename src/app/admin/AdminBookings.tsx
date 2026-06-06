@@ -16,7 +16,11 @@ type Booking = {
   paymentStatus?: boolean;
 };
 
-export default function AdminBookings() {
+export default function AdminBookings({
+  readOnly = false,
+}: {
+  readOnly?: boolean;
+}) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'paid' | 'pending'>('all');
@@ -65,6 +69,22 @@ export default function AdminBookings() {
           Atualizar
         </button>
       </div>
+      {readOnly && (
+        <div
+          style={{
+            backgroundColor: '#1a1c2e',
+            border: '1px solid #3a3060',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            fontSize: '13px',
+            color: '#6a8fb8',
+            marginBottom: '20px',
+          }}
+        >
+          Voce esta em modo de visualizacao. Contate um administrador para
+          gerenciar reservas.
+        </div>
+      )}
 
       <div style={s.summaryGrid}>
         <div style={s.summaryCard}>
