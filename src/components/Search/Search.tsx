@@ -3,19 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { ChangeEvent, FC } from 'react';
 import { useState } from 'react';
-
-/**
- * Tipos de acomodação disponíveis para filtro na busca.
- * Os valores devem corresponder exatamente ao campo `type`
- * cadastrado nas acomodações no Sanity.
- */
-const ROOM_TYPES = [
-  { value: 'all', label: 'Tudo' },
-  { value: 'casa_inteira', label: 'Casa Inteira' },
-  { value: 'suite', label: 'Suíte' },
-  { value: 'quarto_compartilhado', label: 'Quarto Compartilhado' },
-  { value: 'cabana', label: 'Cabana' },
-];
+import { PUBLIC_ROOM_TYPES } from '@/libs/roomTypes';
 
 type Props = {
   roomTypeFilter: string;
@@ -52,7 +40,8 @@ const Search: FC<Props> = ({ roomTypeFilter, setRoomTypeFilter }) => {
             onChange={handleRoomTypeChange}
             className='w-full px-4 py-2 capitalize rounded leading-tight dark:bg-black focus:outline-none'
           >
-            {ROOM_TYPES.map(({ value, label }) => (
+            <option value='all'>Tudo</option>
+            {PUBLIC_ROOM_TYPES.map(({ value, label }) => (
               <option key={value} value={value}>
                 {label}
               </option>

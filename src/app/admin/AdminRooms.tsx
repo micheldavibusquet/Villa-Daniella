@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { ROOM_TYPES } from '@/libs/roomTypes';
 
 type Room = {
   _id: string;
@@ -25,19 +26,6 @@ type RoomForm = {
   maxGuests: string;
   numberOfBeds: string;
 };
-
-/**
- * Tipos de acomodação predefinidos.
- * Devem ser idênticos aos valores usados no filtro de busca (Search.tsx)
- * para garantir que a pesquisa retorne resultados corretos.
- */
-const ROOM_TYPES = [
-  { value: 'casa_inteira', label: 'Casa Inteira' },
-  { value: 'suite', label: 'Suíte' },
-  { value: 'quarto_compartilhado', label: 'Quarto Compartilhado' },
-  { value: 'cabana', label: 'Cabana' },
-  { value: 'personalizado', label: 'Personalizado...' },
-];
 
 const emptyForm: RoomForm = {
   name: '',
