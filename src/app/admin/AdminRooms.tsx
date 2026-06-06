@@ -26,19 +26,23 @@ type RoomForm = {
   numberOfBeds: string;
 };
 
+/**
+ * Tipos de acomodação predefinidos.
+ * Devem ser idênticos aos valores usados no filtro de busca (Search.tsx)
+ * para garantir que a pesquisa retorne resultados corretos.
+ */
 const ROOM_TYPES = [
-  'Islandtype',
-  'basicRoom',
-  'deluxe',
-  'suite',
-  'penthouse',
-  'casa',
+  { value: 'casa_inteira', label: 'Casa Inteira' },
+  { value: 'suite', label: 'Suíte' },
+  { value: 'quarto_compartilhado', label: 'Quarto Compartilhado' },
+  { value: 'cabana', label: 'Cabana' },
+  { value: 'personalizado', label: 'Personalizado...' },
 ];
 
 const emptyForm: RoomForm = {
   name: '',
   description: '',
-  type: 'basicRoom',
+  type: 'casa_inteira',
   price: '',
   maxGuests: '',
   numberOfBeds: '',
@@ -54,6 +58,8 @@ export default function AdminRooms({
   const [showForm, setShowForm] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
   const [form, setForm] = useState<RoomForm>(emptyForm);
+  // Armazena o tipo personalizado quando o admin seleciona "Personalizado"
+  const [customType, setCustomType] = useState('');
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{
     type: 'success' | 'error';
@@ -172,7 +178,8 @@ export default function AdminRooms({
       await axios.post('/api/rooms', {
         name: form.name,
         description: form.description,
-        type: form.type,
+        // Se personalizado, usa o texto digitado; caso contrário usa o valor do select
+        type: form.type === 'personalizado' ? customType : form.type,
         price: Number(form.price),
         maxGuests: Number(form.maxGuests || 2),
         numberOfBeds: Number(form.numberOfBeds),
@@ -216,7 +223,8 @@ export default function AdminRooms({
       await axios.patch(`/api/rooms/${editingRoom._id}`, {
         name: form.name,
         description: form.description,
-        type: form.type,
+        // Se personalizado, usa o texto digitado; caso contrário usa o valor do select
+        type: form.type === 'personalizado' ? customType : form.type,
         price: Number(form.price),
         maxGuests: Number(form.maxGuests),
         numberOfBeds: Number(form.numberOfBeds),
@@ -264,7 +272,7 @@ export default function AdminRooms({
     setForm({
       name: room.name ?? '',
       description: room.description ?? '',
-      type: room.type ?? 'basicRoom',
+      type: room.type ?? 'casa_inteira',
       price: String(room.price ?? ''),
       maxGuests: String(room.dimension ?? ''),
       numberOfBeds: String(room.numberOfBeds ?? ''),
@@ -477,9 +485,9 @@ export default function AdminRooms({
                 value={form.type}
                 onChange={handleChange}
               >
-                {ROOM_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {ROOM_TYPES.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
                   </option>
                 ))}
               </select>
@@ -708,12 +716,21 @@ export default function AdminRooms({
                 value={form.type}
                 onChange={handleChange}
               >
-                {ROOM_TYPES.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
+                {ROOM_TYPES.map(({ value, label }) => (
+                  <option key={value} value={value}>
+                    {label}
                   </option>
                 ))}
               </select>
+              {/* Campo visível apenas quando "Personalizado" é selecionado */}
+              {form.type === 'personalizado' && (
+                <input
+                  style={{ ...s.input, marginTop: '8px' }}
+                  placeholder='Digite o tipo personalizado...'
+                  value={customType}
+                  onChange={(e) => setCustomType(e.target.value)}
+                />
+              )}
             </div>
             <div style={s.formGroup}>
               <label style={s.label}>Preco por noite (R$) *</label>

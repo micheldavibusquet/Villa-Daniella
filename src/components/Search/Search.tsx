@@ -1,69 +1,70 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC } from 'react';
+import { useState } from 'react';
+
+/**
+ * Tipos de acomodação disponíveis para filtro na busca.
+ * Os valores devem corresponder exatamente ao campo `type`
+ * cadastrado nas acomodações no Sanity.
+ */
+const ROOM_TYPES = [
+  { value: 'all', label: 'Tudo' },
+  { value: 'casa_inteira', label: 'Casa Inteira' },
+  { value: 'suite', label: 'Suíte' },
+  { value: 'quarto_compartilhado', label: 'Quarto Compartilhado' },
+  { value: 'cabana', label: 'Cabana' },
+];
 
 type Props = {
   roomTypeFilter: string;
   setRoomTypeFilter: (value: string) => void;
 };
 
-const Search: FC<Props> = ({
-  roomTypeFilter,
-  setRoomTypeFilter,
-}) => {
+const Search: FC<Props> = ({ roomTypeFilter, setRoomTypeFilter }) => {
   const router = useRouter();
-
   const [capacity, setCapacity] = useState('all');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  const handleRoomTypeChange = (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleRoomTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setRoomTypeFilter(event.target.value);
   };
 
+  // Monta a URL com os filtros e navega para a página de acomodações
   const handleFilterClick = () => {
     router.push(
-      `/rooms?roomType=${roomTypeFilter}&capacity=${capacity}&minPrice=${minPrice}&maxPrice=${maxPrice}`
+      `/rooms?roomType=${roomTypeFilter}&capacity=${capacity}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
     );
   };
 
   return (
     <section className='bg-tertiary-light px-4 py-6 rounded-lg mt-8'>
       <div className='container mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 items-end'>
-
-        {/* TIPO DE ACOMODAÇÃO */}
+        {/* Filtro por tipo de acomodação */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black'>
             Acomodações
           </label>
-
           <select
             value={roomTypeFilter}
             onChange={handleRoomTypeChange}
             className='w-full px-4 py-2 capitalize rounded leading-tight dark:bg-black focus:outline-none'
           >
-            <option value='all'>Tudo</option>
-            <option value='quarto_independente'>
-              Quarto independente
-            </option>
-            <option value='casa'>
-              Casa com área social coletiva
-            </option>
-            <option value='casa_privativa'>
-              Casa com área social privativa
-            </option>
+            {ROOM_TYPES.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
 
-        {/* CAPACIDADE */}
+        {/* Filtro por capacidade (número de camas) */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black'>
             Capacidade
           </label>
-
           <select
             value={capacity}
             onChange={(e) => setCapacity(e.target.value)}
@@ -77,12 +78,11 @@ const Search: FC<Props> = ({
           </select>
         </div>
 
-        {/* PREÇO MÍNIMO */}
+        {/* Filtro por preço mínimo */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black'>
             Preço mínimo
           </label>
-
           <input
             type='number'
             placeholder='Ex: 200'
@@ -92,12 +92,11 @@ const Search: FC<Props> = ({
           />
         </div>
 
-        {/* PREÇO MÁXIMO */}
+        {/* Filtro por preço máximo */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black'>
             Preço máximo
           </label>
-
           <input
             type='number'
             placeholder='Ex: 800'
@@ -107,7 +106,7 @@ const Search: FC<Props> = ({
           />
         </div>
 
-        {/* BOTÃO */}
+        {/* Botão de pesquisa */}
         <div>
           <button
             className='btn-primary w-full'
@@ -117,7 +116,6 @@ const Search: FC<Props> = ({
             Pesquisar
           </button>
         </div>
-
       </div>
     </section>
   );
