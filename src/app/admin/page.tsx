@@ -9,12 +9,160 @@ import AdminBookings from './AdminBookings';
 
 type Tab = 'dashboard' | 'rooms' | 'bookings';
 
+// Tipos de estatísticas exibidas na Visão Geral do painel
 type Stats = {
   totalRooms: number;
-  activeBookings: number;
+  confirmedBookings: number;
+  pendingBookings: number;
   totalReviews: number;
   occupancyRate: number;
 };
+
+function DashboardOverview() {
+  const [stats, setStats] = useState<Stats>({
+    totalRooms: 0,
+    confirmedBookings: 0,
+    pendingBookings: 0,
+    totalReviews: 0,
+    occupancyRate: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Busca em paralelo: acomodações, reservas e avaliações
+    async function fetchStats() {
+      try {
+        const [roomsRes, bookingsRes, reviewsRes] = await Promise.all([
+          axios.get('/api/rooms'),
+          axios.get('/api/admin/bookings'),
+          axios.get('/api/room-reviews/all').catch(() => ({ data: [] })),
+        ]);
+
+        const rooms = roomsRes.data ?? [];
+        const bookings = bookingsRes.data ?? [];
+        const reviews = reviewsRes.data ?? [];
+
+        // Reservas confirmadas: têm paymentStatus definido e verdadeiro
+        const confirmedBookings = bookings.filter(
+          (b: any) => b.paymentStatus,
+        ).length;
+
+        // Reservas pendentes: não têm paymentStatus confirmado
+        const pendingBookings = bookings.filter(
+          (b: any) => !b.paymentStatus,
+        ).length;
+
+        // Taxa calculada sobre total de reservas vs acomodações
+        const occupancyRate =
+          rooms.length > 0
+            ? Math.round(
+                ((confirmedBookings + pendingBookings) / rooms.length) * 100,
+              )
+            : 0;
+
+        setStats({
+          totalRooms: rooms.length,
+          confirmedBookings,
+          pendingBookings,
+          occupancyRate,
+          totalReviews: reviews.length,
+        });
+      } catch (err) {
+        console.error('Erro ao buscar stats:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStats();
+  }, []);
+
+  const statCards = [
+    {
+      label: 'Acomodacoes',
+      value: loading ? '--' : String(stats.totalRooms),
+      color: '#b8a06a',
+      desc: 'quartos cadastrados',
+    },
+    {
+      label: 'Confirmadas',
+      value: loading ? '--' : String(stats.confirmedBookings),
+      color: '#6ab88a',
+      desc: 'pagamentos confirmados',
+    },
+    {
+      label: 'Pendentes',
+      value: loading ? '--' : String(stats.pendingBookings),
+      color: '#b8a06a',
+      desc: 'aguardando pagamento',
+    },
+    {
+      label: 'Avaliacoes',
+      value: loading ? '--' : String(stats.totalReviews),
+      color: '#8fb86a',
+      desc: 'reviews de hospedes',
+    },
+    {
+      label: 'Taxa de Ocupacao',
+      value: loading ? '--' : `${stats.occupancyRate}%`,
+      color: '#b86a8f',
+      desc: 'quartos ocupados',
+    },
+  ];
+
+  return (
+    <div>
+      <div style={styles.statsGrid}>
+        {statCards.map((stat) => (
+          <div key={stat.label} style={styles.statCard}>
+            <div>
+              <p style={styles.statValue}>{stat.value}</p>
+              <p style={{ ...styles.statLabel, color: stat.color }}>
+                {stat.label}
+              </p>
+              <p style={styles.statDesc}>{stat.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={styles.welcomeCard}>
+        <h2 style={styles.welcomeTitle}>Bem-vindo ao Painel</h2>
+        <p style={styles.welcomeText}>
+          Use o menu lateral para gerenciar <strong>acomodacoes</strong> e{' '}
+          <strong>reservas</strong>. Para conceder acesso de administrador a
+          outro usuario, use o atalho no menu lateral.
+        </p>
+
+        <div style={styles.howToBox}>
+          <p style={styles.howToTitle}>Como promover um administrador</p>
+          <ol style={styles.howToList}>
+            <li>O usuario deve criar uma conta normalmente no site</li>
+            <li>
+              Acesse{' '}
+              <a
+                href='/studio'
+                style={styles.link}
+                target='_blank'
+                rel='noreferrer'
+              >
+                /studio
+              </a>{' '}
+              e va em <strong>User</strong>
+            </li>
+            <li>Encontre o usuario pelo nome ou e-mail</li>
+            <li>
+              Marque o campo{' '}
+              <strong style={{ color: '#b8a06a' }}>Administrador</strong> como{' '}
+              <strong>verdadeiro</strong>
+            </li>
+            <li>Clique em Publicar - o acesso e imediato</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const { data: session, status } = useSession();
@@ -84,7 +232,6 @@ export default function AdminPage() {
           </div>
           <p style={styles.logoSub}>Painel Administrativo</p>
         </div>
-
         <nav style={styles.nav}>
           {tabs.map((tab) => (
             <button
@@ -100,7 +247,6 @@ export default function AdminPage() {
             </button>
           ))}
         </nav>
-
         <div style={styles.adminPromoBox}>
           <p style={styles.adminPromoTitle}>Promover Administrador</p>
           <p style={styles.adminPromoText}>
@@ -116,7 +262,6 @@ export default function AdminPage() {
             Abrir Sanity Studio
           </a>
         </div>
-
         <div style={styles.sidebarFooter}>
           <div style={styles.userInfo}>
             <div style={styles.userAvatar}>
@@ -129,7 +274,6 @@ export default function AdminPage() {
           </div>
         </div>
       </aside>
-
       <main style={styles.main}>
         <header style={styles.topBar}>
           <h1 style={styles.pageTitle}>
@@ -144,139 +288,12 @@ export default function AdminPage() {
             })}
           </span>
         </header>
-
         <div style={styles.content}>
           {activeTab === 'dashboard' && <DashboardOverview />}
           {activeTab === 'rooms' && <AdminRooms />}
           {activeTab === 'bookings' && <AdminBookings />}
         </div>
       </main>
-    </div>
-  );
-}
-
-function DashboardOverview() {
-  const [stats, setStats] = useState<Stats>({
-    totalRooms: 0,
-    activeBookings: 0,
-    totalReviews: 0,
-    occupancyRate: 0,
-  });
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const [roomsRes, bookingsRes, reviewsRes] = await Promise.all([
-          axios.get('/api/rooms'),
-          axios.get('/api/admin/bookings'),
-          axios.get('/api/room-reviews/all').catch(() => ({ data: [] })),
-        ]);
-
-        const rooms = roomsRes.data ?? [];
-        const bookings = bookingsRes.data ?? [];
-        const reviews = reviewsRes.data ?? [];
-
-        const activeBookings = bookings.filter(
-          (b: any) => b.paymentStatus,
-        ).length;
-        const bookedRooms = rooms.filter((r: any) => r.isBooked).length;
-        const occupancyRate =
-          rooms.length > 0 ? Math.round((bookedRooms / rooms.length) * 100) : 0;
-
-        setStats({
-          totalRooms: rooms.length,
-          activeBookings,
-          totalReviews: reviews.length,
-          occupancyRate,
-        });
-      } catch (err) {
-        console.error('Erro ao buscar stats:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchStats();
-  }, []);
-
-  const statCards = [
-    {
-      label: 'Acomodacoes',
-      value: loading ? '--' : String(stats.totalRooms),
-      color: '#b8a06a',
-      desc: 'quartos cadastrados',
-    },
-    {
-      label: 'Reservas Ativas',
-      value: loading ? '--' : String(stats.activeBookings),
-      color: '#6a8fb8',
-      desc: 'pagamentos confirmados',
-    },
-    {
-      label: 'Avaliacoes',
-      value: loading ? '--' : String(stats.totalReviews),
-      color: '#8fb86a',
-      desc: 'reviews de hospedes',
-    },
-    {
-      label: 'Taxa de Ocupacao',
-      value: loading ? '--' : `${stats.occupancyRate}%`,
-      color: '#b86a8f',
-      desc: 'quartos ocupados',
-    },
-  ];
-
-  return (
-    <div>
-      <div style={styles.statsGrid}>
-        {statCards.map((stat) => (
-          <div key={stat.label} style={styles.statCard}>
-            <div>
-              <p style={styles.statValue}>{stat.value}</p>
-              <p style={{ ...styles.statLabel, color: stat.color }}>
-                {stat.label}
-              </p>
-              <p style={styles.statDesc}>{stat.desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={styles.welcomeCard}>
-        <h2 style={styles.welcomeTitle}>Bem-vindo ao Painel</h2>
-        <p style={styles.welcomeText}>
-          Use o menu lateral para gerenciar <strong>acomodacoes</strong> e{' '}
-          <strong>reservas</strong>. Para conceder acesso de administrador a
-          outro usuario, use o atalho no menu lateral.
-        </p>
-
-        <div style={styles.howToBox}>
-          <p style={styles.howToTitle}>Como promover um administrador</p>
-          <ol style={styles.howToList}>
-            <li>O usuario deve criar uma conta normalmente no site</li>
-            <li>
-              Acesse{' '}
-              <a
-                href='/studio'
-                style={styles.link}
-                target='_blank'
-                rel='noreferrer'
-              >
-                /studio
-              </a>{' '}
-              e va em <strong>User</strong>
-            </li>
-            <li>Encontre o usuario pelo nome ou e-mail</li>
-            <li>
-              Marque o campo{' '}
-              <strong style={{ color: '#b8a06a' }}>Administrador</strong> como{' '}
-              <strong>verdadeiro</strong>
-            </li>
-            <li>Clique em Publicar - o acesso e imediato</li>
-          </ol>
-        </div>
-      </div>
     </div>
   );
 }
@@ -430,7 +447,7 @@ const styles: Record<string, React.CSSProperties> = {
   content: { padding: '32px', flex: 1 },
   statsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(5, 1fr)',
     gap: '16px',
     marginBottom: '32px',
   },
