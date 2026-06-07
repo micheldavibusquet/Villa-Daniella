@@ -8,6 +8,8 @@ import AdminRooms from './AdminRooms';
 import AdminBookings from './AdminBookings';
 import AdminUsers from './AdminUsers';
 import { signOut } from 'next-auth/react';
+import Chart from '@/components/Chart/Chart';
+import { Booking } from '@/models/booking';
 
 /**
  * Tipos de abas disponíveis no painel.
@@ -30,6 +32,20 @@ type Stats = {
   pendingBookings: number;
   occupancyRate: number;
   totalReviews: number;
+};
+/** Estrutura das reservas retornadas pelo endpoint admin */
+type AdminBooking = {
+  _id: string;
+  hotelRoom: { name: string; slug: { current: string } };
+  user?: { name: string; email: string };
+  checkinDate: string;
+  checkoutDate: string;
+  numberOfDays: number;
+  adults: number;
+  children: number;
+  totalPrice: number;
+  discount: number;
+  paymentStatus?: boolean;
 };
 
 /** Labels exibidos no sidebar para cada role */
@@ -82,7 +98,7 @@ export default function AdminPage() {
   if (status === 'loading' || authState === 'checking') {
     return (
       <div style={styles.loadingContainer}>
-        <div style={styles.spinnerRing} />
+        <div style={styles.spinnerRing} className='animate-spin' />
         <p style={styles.loadingText}>Verificando credenciais...</p>
       </div>
     );
@@ -239,9 +255,10 @@ function DashboardOverview() {
     totalReviews: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [adminBookings, setAdminBookings] = useState<AdminBooking[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Busca em paralelo: acomodações, reservas e avaliações
     async function fetchStats() {
       try {
         const [roomsRes, bookingsRes, reviewsRes] = await Promise.all([
@@ -251,20 +268,22 @@ function DashboardOverview() {
         ]);
 
         const rooms = roomsRes.data ?? [];
-        const bookings = bookingsRes.data ?? [];
+        const bookings: AdminBooking[] = bookingsRes.data ?? [];
         const reviews = reviewsRes.data ?? [];
 
-        // Reservas confirmadas: têm paymentStatus definido e verdadeiro
+        // Armazena para o gráfico
+        setAdminBookings(bookings);
+
+        // Comparação estrita — paymentStatus ausente não é confirmado
         const confirmedBookings = bookings.filter(
-          (b: any) => b.paymentStatus,
+          (b) => b.paymentStatus === true,
         ).length;
 
-        // Reservas pendentes: não têm paymentStatus confirmado
         const pendingBookings = bookings.filter(
-          (b: any) => !b.paymentStatus,
+          (b) => b.paymentStatus !== true,
         ).length;
 
-        // Taxa calculada sobre total de reservas vs acomodações
+        // ✅ Corrigido — confirmadas + pendentes = quarto ocupado
         const occupancyRate =
           rooms.length > 0
             ? Math.round(
@@ -281,6 +300,7 @@ function DashboardOverview() {
         });
       } catch (err) {
         console.error('Erro ao buscar stats:', err);
+        setError('Não foi possível carregar os dados do painel.');
       } finally {
         setLoading(false);
       }
@@ -288,6 +308,21 @@ function DashboardOverview() {
 
     fetchStats();
   }, []);
+
+  // UI de erro — exibida quando qualquer API falha
+  if (error) {
+    return (
+      <div style={styles.errorCard}>
+        <span style={{ fontSize: '24px' }}>⚠️</span>
+        <p style={{ color: '#e8e0d0', margin: '8px 0 0', fontSize: '14px' }}>
+          {error}
+        </p>
+        <p style={{ color: '#6b6355', margin: '4px 0 0', fontSize: '12px' }}>
+          Verifique sua conexão ou tente recarregar a página.
+        </p>
+      </div>
+    );
+  }
 
   const statCards = [
     {
@@ -340,6 +375,16 @@ function DashboardOverview() {
         ))}
       </div>
 
+      {/* Gráfico de receita por reserva */}
+      {!loading && adminBookings.length > 0 && (
+        <div style={styles.chartCard}>
+          <p style={styles.chartTitle}>Receita por Reserva</p>
+          {/* Cast necessário: AdminBooking tem os campos name e totalPrice
+              que o Chart utiliza — _id e price não são acessados internamente */}
+          <Chart userBookings={adminBookings as unknown as Booking[]} />
+        </div>
+      )}
+
       <div style={styles.welcomeCard}>
         <h2 style={styles.welcomeTitle}>Bem-vindo ao Painel</h2>
         <p style={styles.welcomeText}>
@@ -347,7 +392,6 @@ function DashboardOverview() {
           <strong>reservas</strong>. Super Administradores tambem podem
           gerenciar <strong>usuarios</strong> e perfis de acesso.
         </p>
-
         <div style={styles.howToBox}>
           <p style={styles.howToTitle}>Como promover um administrador</p>
           <ol style={styles.howToList}>
@@ -610,5 +654,28 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#4a4540',
     margin: 0,
     letterSpacing: '1px',
+  },
+  errorCard: {
+    backgroundColor: '#1a1814',
+    border: '1px solid #5a2a2a',
+    borderRadius: '12px',
+    padding: '32px',
+    textAlign: 'center' as const,
+    marginBottom: '32px',
+  },
+  chartCard: {
+    backgroundColor: '#1a1814',
+    border: '1px solid #2e2a22',
+    borderRadius: '12px',
+    padding: '24px',
+    marginTop: '32px',
+    marginBottom: '32px',
+  },
+  chartTitle: {
+    fontSize: '13px',
+    color: '#b8a06a',
+    margin: '0 0 16px 0',
+    letterSpacing: '1px',
+    textTransform: 'uppercase' as const,
   },
 };
