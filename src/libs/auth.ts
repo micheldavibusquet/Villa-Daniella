@@ -2,10 +2,10 @@ import { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 //import { SanityAdapter } from 'next-auth-sanity';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
+import bcrypt from 'bcryptjs';
 import { client, adminClient } from './sanity';
 
-console.log("GOOGLE ID:", process.env.GOOGLE_CLIENT_ID);
+console.log('GOOGLE ID:', process.env.GOOGLE_CLIENT_ID);
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -17,10 +17,10 @@ export const authOptions: NextAuthOptions = {
 
     // 🔐 EMAIL / SENHA
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Senha", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Senha', type: 'password' },
       },
 
       async authorize(credentials) {
@@ -35,19 +35,21 @@ export const authOptions: NextAuthOptions = {
             email,
             password
           }`,
-          { email }
+          { email },
         );
 
-        // ❌ usuário não existe
-        if (!user) return null;
+        // ❌ usuário não existe — envia erro específico para o frontend
+        if (!user) throw new Error('USER_NOT_FOUND');
 
         // ❌ usuário criado via Google
         if (!user.password) {
-          throw new Error("Use login com Google");
+          throw new Error('Use login com Google');
         }
 
         // ❌ senha incorreta
-        if (user.password !== password) {
+        // ✅ SEGURO — comparação com hash bcrypt
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
           return null;
         }
 
@@ -62,7 +64,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   pages: {
-    signIn: "/auth/signin",
+    signIn: '/auth/signin',
   },
 
   session: {
@@ -86,7 +88,7 @@ export const authOptions: NextAuthOptions = {
           `*[_type == "user" && email == $email][0]{
             _id
           }`,
-          { email: user.email }
+          { email: user.email },
         );
 
         if (!existingUser) {
@@ -116,7 +118,7 @@ export const authOptions: NextAuthOptions = {
           `*[_type == "user" && email == $email][0] {
             _id
           }`,
-          { email: userEmail }
+          { email: userEmail },
         );
 
         return {
@@ -127,7 +129,7 @@ export const authOptions: NextAuthOptions = {
           },
         };
       } catch (error) {
-        console.error("Session callback error:", error);
+        console.error('Session callback error:', error);
         return session;
       }
     },
