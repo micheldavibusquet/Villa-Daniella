@@ -43,6 +43,14 @@ const user = {
       },
       initialValue: 'viewer',
     }),
+    defineField({
+      name: 'active',
+      title: 'Conta Ativa',
+      type: 'boolean',
+      description:
+        'Desative para bloquear o acesso sem excluir o historico do usuario.',
+      initialValue: true,
+    }),
 
     defineField({
       name: 'name',

@@ -30,16 +30,22 @@ export const authOptions: NextAuthOptions = {
 
         const user = await client.fetch(
           `*[_type == "user" && email == $email][0]{
-            _id,
-            name,
-            email,
-            password
-          }`,
+    _id,
+    name,
+    email,
+    password,
+    active
+  }`,
           { email },
         );
 
         // ❌ usuário não existe — envia erro específico para o frontend
         if (!user) throw new Error('USER_NOT_FOUND');
+
+        // ❌ conta desativada pelo administrador
+        if (user.active === false) {
+          throw new Error('ACCOUNT_DISABLED');
+        }
 
         // ❌ usuário criado via Google
         if (!user.password) {

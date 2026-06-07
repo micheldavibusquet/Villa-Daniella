@@ -14,6 +14,7 @@ type User = {
   image?: string;
   role?: 'superAdmin' | 'admin' | 'viewer';
   isAdmin?: boolean;
+  active?: boolean;
   _createdAt: string;
 };
 
@@ -56,24 +57,28 @@ export default function AdminUsers({ currentUserId }: Props) {
   }
 
   /**
-   * Atualiza o role de um usuário via API.
-   * Exibe feedback de sucesso ou erro após a operação.
+   * Atualiza o role ou o status ativo/inativo de um usuário via API.
+   * Aceita newRole para mudança de perfil e active para ativar/desativar.
    */
-  async function handleRoleChange(userId: string, newRole: string) {
+  async function handleRoleChange(
+    userId: string,
+    newRole?: string,
+    active?: boolean,
+  ) {
     try {
       setUpdatingId(userId);
       setFeedback(null);
 
       await axios.patch('/api/admin/users', {
         targetUserId: userId,
-        newRole,
+        ...(newRole !== undefined && { newRole }),
+        ...(active !== undefined && { active }),
       });
 
-      setFeedback({ type: 'success', msg: 'Perfil atualizado com sucesso!' });
+      setFeedback({ type: 'success', msg: 'Usuario atualizado com sucesso!' });
       await fetchUsers();
     } catch (error: any) {
-      const msg =
-        error?.response?.data?.error ?? 'Erro ao atualizar perfil de acesso.';
+      const msg = error?.response?.data?.error ?? 'Erro ao atualizar usuario.';
       setFeedback({ type: 'error', msg });
     } finally {
       setUpdatingId(null);
@@ -142,6 +147,7 @@ export default function AdminUsers({ currentUserId }: Props) {
                   'Email',
                   'Perfil Atual',
                   'Alterar Perfil',
+                  'Status',
                   'Desde',
                 ].map((h) => (
                   <th key={h} style={s.th}>
@@ -213,6 +219,34 @@ export default function AdminUsers({ currentUserId }: Props) {
                         <option value='admin'>Administrador</option>
                         <option value='viewer'>Somente Visualizacao</option>
                       </select>
+                    </td>
+
+                    {/* Status ativo/inativo */}
+                    <td style={s.td}>
+                      <button
+                        style={{
+                          backgroundColor:
+                            user.active === false ? '#2e1a1a' : '#1a2e1a',
+                          color: user.active === false ? '#b88a8a' : '#8ab88a',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '4px 10px',
+                          fontSize: '11px',
+                          cursor: isSelf ? 'not-allowed' : 'pointer',
+                          fontFamily: 'Georgia, serif',
+                          opacity: isSelf ? 0.5 : 1,
+                        }}
+                        disabled={isSelf || updatingId === user._id}
+                        onClick={() =>
+                          handleRoleChange(
+                            user._id,
+                            undefined,
+                            !(user.active !== false),
+                          )
+                        }
+                      >
+                        {user.active === false ? 'Desativado' : 'Ativo'}
+                      </button>
                     </td>
 
                     {/* Data de cadastro */}

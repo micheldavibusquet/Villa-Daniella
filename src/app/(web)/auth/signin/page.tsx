@@ -39,6 +39,13 @@ export default function SignInPage() {
         );
         return;
       }
+      if (res.error === 'ACCOUNT_DISABLED') {
+        setFormError(
+          'Esta conta foi desativada. Entre em contato com o administrador.',
+        );
+        setLoading(false);
+        return;
+      }
 
       // Conta criada via Google — sem senha cadastrada
       if (res.error === 'Use login com Google') {
