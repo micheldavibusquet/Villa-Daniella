@@ -18,9 +18,9 @@ type Props = {
  */
 const ClientComponent: FC<Props> = ({ heading1, section2 }) => {
   return (
-    <section className='flex px-6 items-start gap-20 container mx-auto'>
+    <section className='container mx-auto flex items-start gap-10 xl:gap-20 px-6 md:px-10 xl:px-16 py-10 overflow-hidden'>
       {/* Coluna esquerda — texto e tipos de acomodação */}
-      <div className='flex flex-col justify-start h-full max-w-xl'>
+      <div className='flex flex-col justify-start h-full max-w-xl flex-shrink-0'>
         {heading1}
 
         {/* Tipos exibidos como texto corrido — evita problemas de quebra de linha */}
@@ -35,7 +35,7 @@ const ClientComponent: FC<Props> = ({ heading1, section2 }) => {
       </div>
 
       {/* Coluna direita — galeria de imagens */}
-      {section2}
+      <div className='flex-1 min-w-0'>{section2}</div>
     </section>
   );
 };

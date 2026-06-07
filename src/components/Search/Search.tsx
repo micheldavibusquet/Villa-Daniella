@@ -41,7 +41,7 @@ const Search: FC<Props> = ({ roomTypeFilter, setRoomTypeFilter }) => {
   };
 
   return (
-    <section className='bg-tertiary-light px-4 py-6 rounded-lg mt-8'>
+    <section className='bg-tertiary-light px-6 md:px-10 py-6 rounded-lg mt-8'>
       <div className='container mx-auto flex flex-col gap-4'>
         {/* Linha de filtros */}
         <div className='grid grid-cols-1 md:grid-cols-5 gap-4'>
@@ -147,7 +147,7 @@ const Search: FC<Props> = ({ roomTypeFilter, setRoomTypeFilter }) => {
 
         {/* Botão de pesquisa — largura total abaixo dos filtros */}
         <button
-          className='btn-primary w-full'
+          className='btn-primary mx-auto block px-16'
           type='button'
           onClick={handleFilterClick}
         >
