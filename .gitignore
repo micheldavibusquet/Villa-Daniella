@@ -26,7 +26,6 @@ yarn-error.log*
 
 # local env files
 
-
 # vercel
 .vercel
 
@@ -35,4 +34,4 @@ yarn-error.log*
 next-env.d.ts
 .env
 backup.ndjson
-.env.local 
+.env.local
