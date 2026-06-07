@@ -46,13 +46,13 @@ export default function SignUpPage() {
       }),
     });
 
-    const data = await res.text();
+    const data = await res.json().catch(() => ({}));
 
     if (res.ok) {
       await signIn('credentials', { email, password, redirect: false });
       router.push('/');
     } else {
-      setError(data || 'Erro ao criar conta');
+      setError(data.error || 'Erro ao criar conta');
     }
   }
 
