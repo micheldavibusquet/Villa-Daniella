@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 import { getRoom } from '@/libs/apis';
 import HotelPhotoGallery from '@/components/HotelPhotoGallery/HotelPhotoGallery';
@@ -16,6 +18,9 @@ const RoomDetails = (props: { params: { slug: string } }) => {
     params: { slug },
   } = props;
 
+  const { status } = useSession();
+  const router = useRouter();
+
   const [room, setRoom] = useState<Room | null>(null);
   const [error, setError] = useState(false);
 
@@ -26,17 +31,18 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   const [isBooked, setIsBooked] = useState(false);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
 
-  // ✅ FETCH SEM SWR (SEM LOADING)
+  // Busca os dados da acomodação pelo slug da URL ao carregar a página.
+  // Decodifica o slug para lidar com caracteres especiais (ex: acentos) na URL.
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getRoom(slug);
+        const data = await getRoom(decodeURIComponent(slug));
         setRoom(data);
-      } catch {
+      } catch (err) {
+        console.error('Erro ao buscar acomodação:', err);
         setError(true);
       }
     };
-
     fetchData();
   }, [slug]);
 
@@ -56,6 +62,11 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   };
 
   const handleBookNowClick = async () => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+
     if (!room) return;
 
     if (!checkinDate || !checkoutDate)
@@ -66,8 +77,7 @@ const RoomDetails = (props: { params: { slug: string } }) => {
 
     const numberOfDays = calcNumDays();
 
-    if (numberOfDays < 2)
-      return toast.error('Mínimo de 2 diárias');
+    if (numberOfDays < 2) return toast.error('Mínimo de 2 diárias');
 
     try {
       const stripe = await getStripe();
@@ -153,53 +163,47 @@ const RoomDetails = (props: { params: { slug: string } }) => {
     fetchBookedDates();
   }, [room]);
 
-  if (error) return <div className="p-10">Erro ao carregar</div>;
+  if (error) return <div className='p-10'>Erro ao carregar</div>;
 
   return (
     <div>
-
       {/* GALERIA */}
       {room && <HotelPhotoGallery photos={room.images || []} />}
 
       {/* CONTEÚDO */}
       {room && (
-        <div className="container mx-auto px-4 mt-20 mb-20">
-          <div className="grid md:grid-cols-12 gap-10">
+        <div className='container mx-auto px-4 mt-20 mb-20'>
+          <div className='grid md:grid-cols-12 gap-10'>
+            <div className='md:col-span-8'>
+              <h1 className='text-3xl font-bold mb-6'>{room.name}</h1>
 
-            <div className="md:col-span-8">
-
-              <h1 className="text-3xl font-bold mb-6">
-                {room.name}
-              </h1>
-
-              <div className="flex flex-wrap gap-4 mb-10">
+              <div className='flex flex-wrap gap-4 mb-10'>
                 {(room.offeredAmenities || []).map((amenity) => (
                   <div
                     key={amenity._key}
-                    className="w-32 h-28 bg-gray-100 rounded-lg flex flex-col items-center justify-center"
+                    className='w-32 h-28 bg-gray-100 rounded-lg flex flex-col items-center justify-center'
                   >
                     <i className={`fa-solid ${amenity.icon}`} />
-                    <p className="text-xs mt-2">{amenity.amenity}</p>
+                    <p className='text-xs mt-2'>{amenity.amenity}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mb-12">
-                <h2 className="text-2xl font-semibold mb-3">Descrição</h2>
-                <p className="text-gray-700 leading-relaxed">
+              <div className='mb-12'>
+                <h2 className='text-2xl font-semibold mb-3'>Descrição</h2>
+                <p className='text-gray-700 leading-relaxed'>
                   {room.description}
                 </p>
               </div>
 
-              <div className="bg-white shadow rounded-lg p-6">
-                <h3 className="font-semibold mb-4">Avaliações</h3>
+              <div className='bg-white shadow rounded-lg p-6'>
+                <h3 className='font-semibold mb-4'>Avaliações</h3>
                 <RoomReview roomId={room._id} />
               </div>
             </div>
 
-            <div className="md:col-span-4">
-              <div className="sticky top-20 bg-white shadow rounded-xl p-4">
-
+            <div className='md:col-span-4'>
+              <div className='sticky top-20 bg-white shadow rounded-xl p-4'>
                 <BookRoomCta
                   discount={room.discount}
                   price={room.price}
@@ -219,7 +223,6 @@ const RoomDetails = (props: { params: { slug: string } }) => {
                 />
               </div>
             </div>
-
           </div>
         </div>
       )}

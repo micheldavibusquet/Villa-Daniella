@@ -35,7 +35,7 @@ const RoomCard: FC<Props> = ({ room }) => {
         <div className='h-60 overflow-hidden relative group cursor-pointer'>
           {/* IMAGEM PRINCIPAL */}
           <Image
-            src={coverImage?.url || '/placeholder.jpg'}
+            src={coverImage?.url || coverImage?.assetUrl || '/placeholder.jpg'}
             alt={name}
             width={400}
             height={300}

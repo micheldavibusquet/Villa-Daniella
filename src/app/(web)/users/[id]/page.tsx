@@ -61,7 +61,7 @@ const UserDetails = (props: { params: { id: string } }) => {
     }
   };
 
-  const toggleRatingModal = () => setIsRatingVisible(prevState => !prevState);
+  const toggleRatingModal = () => setIsRatingVisible((prevState) => !prevState);
 
   const reviewSubmitHandler = async () => {
     if (!ratingText.trim().length || !ratingValue) {
@@ -116,7 +116,7 @@ const UserDetails = (props: { params: { id: string } }) => {
 
   if (!userData) {
     return (
-      <div className="p-10 text-center">
+      <div className='p-10 text-center'>
         Não foi possível carregar os dados do usuário.
       </div>
     );
@@ -124,7 +124,11 @@ const UserDetails = (props: { params: { id: string } }) => {
 
   const safeBookings = userBookings || [];
 
-  const avatarSrc = uploadedImage || (typeof userData.image === 'string' && userData.image ? userData.image : null);
+  const avatarSrc =
+    uploadedImage ||
+    (typeof userData.image === 'string' && userData.image
+      ? userData.image
+      : null);
 
   const AvatarDisplay = ({ size }: { size: number }) => (
     <div
@@ -142,7 +146,10 @@ const UserDetails = (props: { params: { id: string } }) => {
           className='object-cover w-full h-full rounded-full scale-animation'
         />
       ) : (
-        <FaUserCircle className='w-full h-full text-gray-400' style={{ width: size, height: size }} />
+        <FaUserCircle
+          className='w-full h-full text-gray-400'
+          style={{ width: size, height: size }}
+        />
       )}
 
       {/* overlay ao hover */}
@@ -168,7 +175,6 @@ const UserDetails = (props: { params: { id: string } }) => {
       />
 
       <div className='grid md:grid-cols-12 gap-10'>
-
         <div className='hidden md:block md:col-span-4 lg:col-span-3 shadow-lg h-fit sticky top-10 bg-[#eff0f2] text-black rounded-lg px-6 py-4'>
           <AvatarDisplay size={143} />
 
@@ -192,9 +198,7 @@ const UserDetails = (props: { params: { id: string } }) => {
 
         <div className='md:col-span-8 lg:col-span-9'>
           <div className='flex items-center'>
-            <h5 className='text-2xl font-bold mr-3'>
-              Olá, {userData.name}
-            </h5>
+            <h5 className='text-2xl font-bold mr-3'>Olá, {userData.name}</h5>
           </div>
 
           <div className='md:hidden mb-3'>
@@ -220,9 +224,7 @@ const UserDetails = (props: { params: { id: string } }) => {
           <nav className='sticky top-0 px-2 w-fit mx-auto md:w-full md:px-5 py-3 mb-8 text-gray-700 border border-gray-200 rounded-lg bg-gray-50 mt-7'>
             <ol
               className={`${
-                currentNav === 'bookings'
-                  ? 'text-blue-600'
-                  : 'text-gray-700'
+                currentNav === 'bookings' ? 'text-blue-600' : 'text-gray-700'
               } inline-flex mr-1 md:mr-5 items-center space-x-1 md:space-x-3`}
             >
               <li
@@ -238,9 +240,7 @@ const UserDetails = (props: { params: { id: string } }) => {
 
             <ol
               className={`${
-                currentNav === 'amount'
-                  ? 'text-blue-600'
-                  : 'text-gray-700'
+                currentNav === 'amount' ? 'text-blue-600' : 'text-gray-700'
               } inline-flex mr-1 md:mr-5 items-center space-x-1 md:space-x-3`}
             >
               <li
