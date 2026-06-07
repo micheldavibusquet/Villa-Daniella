@@ -171,8 +171,10 @@ export default function AdminBookings({
                     {booking.numberOfDays}
                   </td>
                   <td style={{ ...s.td, textAlign: 'center' as const }}>
-                    {booking.adults}A{' '}
-                    {booking.children > 0 ? `+ ${booking.children}C` : ''}
+                    {booking.adults} adulto{booking.adults !== 1 ? 's' : ''}
+                    {booking.children > 0
+                      ? ` + ${booking.children} criança${booking.children !== 1 ? 's' : ''}`
+                      : ''}
                   </td>
                   <td style={s.td}>
                     <span style={s.price}>

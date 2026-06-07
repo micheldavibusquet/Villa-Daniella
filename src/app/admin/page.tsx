@@ -7,6 +7,7 @@ import axios from 'axios';
 import AdminRooms from './AdminRooms';
 import AdminBookings from './AdminBookings';
 import AdminUsers from './AdminUsers';
+import { signOut } from 'next-auth/react';
 
 /**
  * Tipos de abas disponíveis no painel.
@@ -169,10 +170,27 @@ export default function AdminPage() {
             </div>
             <div>
               <p style={styles.userName}>{session?.user?.name ?? 'Admin'}</p>
-              {/* Exibe o role atual do usuário logado */}
               <p style={styles.userRole}>{ROLE_LABELS[userRole]}</p>
             </div>
           </div>
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            style={{
+              marginTop: '12px',
+              width: '100%',
+              backgroundColor: 'transparent',
+              border: '1px solid #2e2a22',
+              borderRadius: '6px',
+              padding: '8px',
+              color: '#6b6355',
+              fontSize: '12px',
+              fontFamily: 'Georgia, serif',
+              cursor: 'pointer',
+              letterSpacing: '1px',
+            }}
+          >
+            Sair do painel
+          </button>
         </div>
       </aside>
 

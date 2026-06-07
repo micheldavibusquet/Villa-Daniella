@@ -63,7 +63,20 @@ const Header = () => {
           </a>
         </li>
 
+        {/* Painel Admin — visível apenas para administradores */}
+        {userData?.isAdmin && (
+          <li className='hover:-translate-y-1 duration-300 transition-all'>
+            <Link
+              href='/admin'
+              className='font-medium border-b-2 border-primary pb-0.5'
+            >
+              Painel Admin
+            </Link>
+          </li>
+        )}
+
         {/* USER + DARKMODE */}
+
         <li className='flex items-center gap-3'>
           {session?.user ? (
             <div className='flex items-center gap-2'>
@@ -85,16 +98,6 @@ const Header = () => {
               <span className='text-sm font-medium hidden md:block'>
                 {session.user.name?.split(' ')[0]}
               </span>
-
-              {/* Link para painel admin — visível apenas para administradores */}
-              {userData?.isAdmin && (
-                <Link
-                  href='/admin'
-                  className='text-sm bg-primary text-white px-3 py-1 rounded hover:-translate-y-1 duration-300 transition-all'
-                >
-                  Painel Admin
-                </Link>
-              )}
 
               {/* Botão sair */}
               <button onClick={() => signOut()} className='text-sm underline'>
