@@ -39,7 +39,7 @@ export default function SignInPage() {
   return (
     <div className="flex flex-col items-center justify-center h-[70vh] gap-6">
 
-      <h1 className="text-2xl font-bold">Login</h1>
+      <h1 className="text-2xl font-bold dark:text-white">Login</h1>
 
       {/* 🔴 ERRO */}
       {error && (
@@ -60,7 +60,7 @@ export default function SignInPage() {
         Entrar com Google
       </button>
 
-      <p className="text-sm text-gray-400">ou</p>
+      <p className="text-sm text-gray-400 dark:text-gray-500">ou</p>
 
       {/* ⚫ EMAIL/SENHA */}
       <form
@@ -73,7 +73,7 @@ export default function SignInPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="border px-3 py-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
 
         <input
@@ -82,20 +82,20 @@ export default function SignInPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="border px-3 py-2 rounded"
+          className="border border-gray-300 dark:border-gray-600 px-3 py-2 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-black text-white py-2 rounded"
+          className="bg-[#46220f] dark:bg-amber-700 text-white py-2 rounded hover:bg-[#5a2e16] transition-colors"
         >
           {loading ? "Entrando..." : "Entrar com email"}
         </button>
       </form>
 
       {/* 🟡 AJUDA */}
-      <p className="text-xs text-gray-500 text-center max-w-xs">
+      <p className="text-xs text-gray-500 dark:text-gray-400 text-center max-w-xs">
         Não lembra sua senha? Use o login com Google.
       </p>
 

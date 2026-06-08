@@ -3,7 +3,11 @@ import { adminClient } from "@/libs/sanity";
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name, phone } = await req.json();
+    const {
+      email, password, name, phone,
+      cpf, rg, birthDate, nationality,
+      address, emergencyContact, emergencyPhone,
+    } = await req.json();
 
     // validação básica
     if (!email || !password || !name) {
@@ -27,6 +31,13 @@ export async function POST(req: Request) {
       email,
       password,
       ...(phone ? { phone } : {}),
+      ...(cpf ? { cpf } : {}),
+      ...(rg ? { rg } : {}),
+      ...(birthDate ? { birthDate } : {}),
+      ...(nationality ? { nationality } : {}),
+      ...(address ? { address } : {}),
+      ...(emergencyContact ? { emergencyContact } : {}),
+      ...(emergencyPhone ? { emergencyPhone } : {}),
     });
 
     return NextResponse.json(newUser, { status: 201 });

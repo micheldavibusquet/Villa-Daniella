@@ -53,11 +53,11 @@ const BookRoomCta: FC<Props> = props => {
   };
 
   return (
-    <div className='px-7 py-6'>
+    <div className='px-7 py-6 dark:text-gray-100'>
       <h3>
-        <span className='text-sm text-gray-500 block mb-1'>Valor da diária</span>
+        <span className='text-sm text-gray-500 dark:text-gray-400 block mb-1'>Valor da diária</span>
         <span
-          className={`${discount ? 'text-gray-400' : ''} font-bold text-xl`}
+          className={`${discount ? 'text-gray-400 dark:text-gray-500' : 'dark:text-white'} font-bold text-xl`}
         >
           R$ {price}
         </span>
@@ -73,15 +73,15 @@ const BookRoomCta: FC<Props> = props => {
 
       <div className='w-full border-b-2 border-b-secondary my-2' />
 
-      <h4 className='my-8'>{specialNote}</h4>
+      <h4 className='my-8 dark:text-gray-200'>{specialNote}</h4>
 
-      <p className='text-xs text-gray-500 mb-2'>Mínimo de 2 diárias</p>
+      <p className='text-xs text-gray-500 dark:text-gray-400 mb-2'>Mínimo de 2 diárias</p>
 
       <div className='flex'>
         <div className='w-1/2 pr-2'>
           <label
             htmlFor='check-in-date'
-            className='block text-sm font-medium text-gray-900 dark:text-gray-400'
+            className='block text-sm font-medium text-gray-900 dark:text-gray-200'
           >
             Data checkin
           </label>
@@ -93,14 +93,14 @@ const BookRoomCta: FC<Props> = props => {
             minDate={new Date()}
             excludeDates={bookedDates}
             id='check-in-date'
-            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
+            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white'
           />
         </div>
 
         <div className='w-1/2 pl-2'>
           <label
             htmlFor='check-out-date'
-            className='block text-sm font-medium text-gray-900 dark:text-gray-400'
+            className='block text-sm font-medium text-gray-900 dark:text-gray-200'
           >
             Data checkout
           </label>
@@ -113,7 +113,7 @@ const BookRoomCta: FC<Props> = props => {
             minDate={calcMinCheckoutDate()}
             excludeDates={bookedDates}
             id='check-out-date'
-            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary'
+            className='w-full border text-black border-gray-300 rounded-lg p-2.5 focus:ring-primary focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white'
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ const BookRoomCta: FC<Props> = props => {
         <div className='w-1/2 pr-2'>
           <label
             htmlFor='adults'
-            className='block text-sm font-medium text-gray-900 dark:text-gray-400'
+            className='block text-sm font-medium text-gray-900 dark:text-gray-200'
           >
             Adultos
           </label>
@@ -134,14 +134,14 @@ const BookRoomCta: FC<Props> = props => {
             onChange={e => setAdults(+e.target.value)}
             min={1}
             max={5}
-            className='w-full border border-gray-300 rounded-lg p-2.5'
+            className='w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5'
           />
         </div>
 
         <div className='w-1/2 pl-2'>
           <label
             htmlFor='children'
-            className='block text-sm font-medium text-gray-900 dark:text-gray-400'
+            className='block text-sm font-medium text-gray-900 dark:text-gray-200'
           >
             Crianças
           </label>
@@ -153,7 +153,7 @@ const BookRoomCta: FC<Props> = props => {
             onChange={e => setNoOfChildren(+e.target.value)}
             min={0}
             max={3}
-            className='w-full border border-gray-300 rounded-lg p-2.5'
+            className='w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg p-2.5'
           />
         </div>
       </div>

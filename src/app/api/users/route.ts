@@ -64,8 +64,8 @@ export async function POST(req: Request, res: Response) {
 
     return NextResponse.json(data, { status: 200, statusText: 'Realizada com sucesso' });
   } catch (error: any) {
-    console.log('Erro na atualização', error);
-    return new NextResponse('Impossibilitado de criar avaliação', { status: 400 });
+    console.log('Erro na atualização', error?.message || error);
+    return new NextResponse(error?.message || 'Impossibilitado de criar avaliação', { status: 400 });
   }
 }
 

@@ -114,7 +114,7 @@ export async function POST(req: Request) {
 
         payment_method_types: ['card'],
 
-        success_url: `${origin}/booking/confirm?session_id={CHECKOUT_SESSION_ID}&userId=${userId}`,
+        success_url: `${origin}/booking/confirm?session_id={CHECKOUT_SESSION_ID}&userId=${userId}&checkinDate=${formattedCheckinDate}&checkoutDate=${formattedCheckoutDate}&numberOfDays=${numberOfDays}&totalPrice=${grandTotal}`,
         cancel_url: `${origin}/rooms`,
 
         metadata: {
