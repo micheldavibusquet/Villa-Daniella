@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { adminClient } from '@/libs/sanity';
+import { sendWelcomeEmail } from '@/libs/email';
 
 /**
  * POST /api/auth/register
@@ -52,6 +53,13 @@ export async function POST(req: Request) {
       isAdmin: false,
       about: '',
     });
+
+    // Email de boas-vindas — falha silenciosa para não bloquear o cadastro
+    try {
+      await sendWelcomeEmail(email, name);
+    } catch (emailError) {
+      console.warn('⚠️ Email de boas-vindas não enviado:', emailError);
+    }
 
     return NextResponse.json(
       { success: true, userId: newUser._id },

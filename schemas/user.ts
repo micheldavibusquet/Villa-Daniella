@@ -101,6 +101,18 @@ const user = {
       type: 'text',
       description: 'Breve descricao sobre o usuario',
     }),
+    defineField({
+      name: 'resetToken',
+      type: 'string',
+      // Oculto no Studio — gerenciado exclusivamente pela API de reset
+      hidden: true,
+    }),
+    defineField({
+      name: 'resetTokenExpiry',
+      type: 'datetime',
+      // Expiração do token — 1 hora após geração
+      hidden: true,
+    }),
   ],
 };
 

@@ -9,14 +9,11 @@ export default function SignInPage() {
   const params = useSearchParams();
   const router = useRouter();
 
-  // Erro vindo da URL (ex: sessão expirada, acesso negado)
   const urlError = params.get('error');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // Erro gerado pelo formulário de login
   const [formError, setFormError] = useState('');
 
   async function handleCredentialsLogin(e: React.FormEvent) {
@@ -32,7 +29,6 @@ export default function SignInPage() {
     });
 
     if (res?.error) {
-      // Usuário não encontrado — redireciona para cadastro com email preenchido
       if (res.error === 'USER_NOT_FOUND') {
         router.push(
           `/auth/signup?email=${encodeURIComponent(email)}&msg=Conta não encontrada. Crie uma conta para continuar.`,
@@ -46,15 +42,11 @@ export default function SignInPage() {
         setLoading(false);
         return;
       }
-
-      // Conta criada via Google — sem senha cadastrada
       if (res.error === 'Use login com Google') {
         setFormError('Esta conta usa login com Google.');
         setLoading(false);
         return;
       }
-
-      // Senha incorreta
       setFormError('Email ou senha incorretos.');
     }
 
@@ -69,7 +61,6 @@ export default function SignInPage() {
     <div className='flex flex-col items-center justify-center h-[70vh] gap-6'>
       <h1 className='text-2xl font-bold'>Login</h1>
 
-      {/* Erro vindo da URL (ex: sessão expirada) */}
       {urlError && (
         <div className='bg-red-500 text-white px-4 py-2 rounded text-center max-w-md'>
           {urlError === 'CredentialsSignin'
@@ -80,12 +71,10 @@ export default function SignInPage() {
         </div>
       )}
 
-      {/* Erro do formulário */}
       {formError && (
         <p className='text-red-500 text-sm text-center max-w-xs'>{formError}</p>
       )}
 
-      {/* Botão Google */}
       <button
         onClick={() => signIn('google', { callbackUrl: '/' })}
         className='bg-blue-600 text-white px-4 py-2 rounded w-72'
@@ -95,7 +84,6 @@ export default function SignInPage() {
 
       <p className='text-sm text-gray-400'>ou</p>
 
-      {/* Formulário email/senha */}
       <form
         onSubmit={handleCredentialsLogin}
         className='flex flex-col gap-3 w-72'
@@ -108,7 +96,6 @@ export default function SignInPage() {
           required
           className='border px-3 py-2 rounded'
         />
-
         <input
           type='password'
           placeholder='Senha'
@@ -117,15 +104,22 @@ export default function SignInPage() {
           required
           className='border px-3 py-2 rounded'
         />
-
         <button
           type='submit'
           disabled={loading}
-          className='bg-black text-white py-2 rounded'
+          className='bg-black text-white py-2 rounded disabled:opacity-60'
         >
           {loading ? 'Entrando...' : 'Entrar com email'}
         </button>
       </form>
+
+      {/* Link de recuperação de senha */}
+      <a
+        href='/auth/forgot-password'
+        className='text-xs text-gray-400 text-center hover:underline'
+      >
+        Esqueci minha senha
+      </a>
 
       <p className='text-sm'>
         Não tem conta?{' '}
