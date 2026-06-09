@@ -35,6 +35,9 @@ const UserDetails = (props: { params: { id: string } }) => {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
+  const [cancelTermsAccepted, setCancelTermsAccepted] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -106,7 +109,6 @@ const UserDetails = (props: { params: { id: string } }) => {
 
   const {
     data: userBookings,
-    error,
     isLoading,
     mutate: mutateBookings,
   } = useSWR('/api/room-bookings', fetchUserBooking);
@@ -116,22 +118,32 @@ const UserDetails = (props: { params: { id: string } }) => {
     mutate: mutateReviews,
   } = useSWR(`/api/user-reviews-${userId}`, fetchUserReviews);
 
-  const cancelBookingHandler = async (bookingId: string) => {
-    if (!confirm('Tem certeza que deseja cancelar esta reserva? Esta ação não pode ser desfeita.')) return;
+  const cancelBookingHandler = (bookingId: string) => {
+    setCancelTermsAccepted(false);
+    setBookingToCancel(bookingId);
+  };
+
+  const confirmCancelHandler = async () => {
+    if (!bookingToCancel) return;
+    setIsCancelling(true);
     try {
       const res = await fetch('/api/cancel-booking', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId }),
+        body: JSON.stringify({ bookingId: bookingToCancel }),
       });
       if (!res.ok) {
         const msg = await res.text();
-        return toast.error(msg || 'Erro ao cancelar reserva');
+        toast.error(msg || 'Erro ao cancelar reserva');
+      } else {
+        toast.success('Reserva cancelada com sucesso!');
+        mutateBookings();
       }
-      toast.success('Reserva cancelada com sucesso!');
-      mutateBookings();
     } catch {
       toast.error('Erro ao cancelar reserva');
+    } finally {
+      setIsCancelling(false);
+      setBookingToCancel(null);
     }
   };
 
@@ -380,6 +392,49 @@ const UserDetails = (props: { params: { id: string } }) => {
           ) : null}
         </div>
       </div>
+
+      {bookingToCancel && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div className='absolute inset-0 bg-black bg-opacity-50' onClick={() => setBookingToCancel(null)} />
+          <div className='relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6'>
+            <h3 className='text-lg font-bold text-gray-800 dark:text-white mb-3'>Cancelar Reserva</h3>
+
+            <div className='bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-lg p-4 mb-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed'>
+              <p className='font-semibold text-amber-800 dark:text-amber-400 mb-2'>Política de Cancelamento</p>
+              <p>O cancelamento de reservas é permitido somente com <strong>antecedência mínima de 5 dias</strong> em relação à data de entrada.</p>
+              <p className='mt-2'>Caso a solicitação seja feita dentro desse período, o cancelamento <strong>não será aceito</strong> e a reserva permanecerá ativa.</p>
+            </div>
+
+            <label className='flex items-start gap-3 cursor-pointer mb-5'>
+              <input
+                type='checkbox'
+                checked={cancelTermsAccepted}
+                onChange={e => setCancelTermsAccepted(e.target.checked)}
+                className='mt-0.5 w-4 h-4 accent-[#46220f] cursor-pointer'
+              />
+              <span className='text-sm text-gray-700 dark:text-gray-300'>
+                Concordo com os termos aplicados e desejo prosseguir com o cancelamento.
+              </span>
+            </label>
+
+            <div className='flex gap-3 justify-end'>
+              <button
+                onClick={() => setBookingToCancel(null)}
+                className='px-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
+              >
+                Voltar
+              </button>
+              <button
+                onClick={confirmCancelHandler}
+                disabled={!cancelTermsAccepted || isCancelling}
+                className='px-4 py-2 text-sm rounded-lg bg-red-500 text-white font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed hover:bg-red-600 enabled:hover:bg-red-600'
+              >
+                {isCancelling ? 'Cancelando...' : 'Confirmar cancelamento'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <RatingModal
         isOpen={isRatingVisible}

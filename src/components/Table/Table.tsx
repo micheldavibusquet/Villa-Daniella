@@ -51,7 +51,6 @@ const Table: FC<Props> = ({ bookingDetails, setRoomId, toggleRatingModal, onCanc
           )}
           {bookingDetails.map((booking, idx) => {
             const remaining = daysUntilCheckin(booking.checkinDate);
-            const canCancel = remaining > 5;
             return (
               <tr
                 key={booking._id}
@@ -99,7 +98,7 @@ const Table: FC<Props> = ({ bookingDetails, setRoomId, toggleRatingModal, onCanc
                       <BsStarFill className='text-yellow-500' />
                       Avaliar
                     </button>
-                    {canCancel && onCancelBooking && (
+                    {onCancelBooking && (
                       <button
                         onClick={() => onCancelBooking(booking._id)}
                         className='flex items-center gap-1 text-xs font-semibold text-red-500 hover:text-red-700 transition-colors'
