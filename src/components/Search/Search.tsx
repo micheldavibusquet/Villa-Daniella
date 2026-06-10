@@ -31,8 +31,8 @@ const Search: FC<Props> = ({
   };
 
   return (
-    <section className='bg-tertiary-light dark:bg-gray-800 px-4 py-6 rounded-lg mt-8'>
-      <div className='container mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 items-end'>
+<section className='bg-tertiary-light dark:bg-gray-800 px-4 py-6 rounded-lg mt-8'>
+  <div className='container mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 items-end'>
 
         {/* TIPO DE ACOMODAÇÃO */}
         <div>
@@ -117,7 +117,6 @@ const Search: FC<Props> = ({
             Pesquisar
           </button>
         </div>
-
       </div>
     </section>
   );

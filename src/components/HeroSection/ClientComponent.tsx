@@ -9,10 +9,9 @@ type Props = {
 
 const ClientComponent: FC<Props> = ({ heading1, section2 }) => {
   return (
-    <section className='flex px-6 items-start gap-20 container mx-auto'>
-
-      {/* TEXTO */}
-      <div className='flex flex-col justify-start h-full max-w-xl'>
+    <section className='container mx-auto flex items-start gap-10 xl:gap-20 px-6 md:px-10 xl:px-16 py-10 overflow-hidden'>
+      {/* Coluna esquerda — texto e tipos de acomodação */}
+      <div className='flex flex-col justify-start h-full max-w-xl flex-shrink-0'>
         {heading1}
 
         {/* TIPOS DE ACOMODAÇÃO */}
@@ -25,9 +24,8 @@ const ClientComponent: FC<Props> = ({ heading1, section2 }) => {
         </div>
       </div>
 
-      {/* IMAGENS */}
-      {section2}
-
+      {/* Coluna direita — galeria de imagens */}
+      <div className='flex-1 min-w-0'>{section2}</div>
     </section>
   );
 };

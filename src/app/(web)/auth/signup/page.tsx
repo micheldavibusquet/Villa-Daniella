@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 function maskPhone(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 11);
-  if (digits.length === 0) return "";
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length === 0) return '';
   if (digits.length <= 2) return `(${digits}`;
   if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
   const isMobile = digits.length === 11;
@@ -53,16 +53,16 @@ export default function SignUpPage() {
 
   async function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (password !== confirmPassword) {
-      setError("As senhas não coincidem.");
+      setError('As senhas não coincidem.');
       return;
     }
+        setLoading(true);
 
-    setLoading(true);
     try {
-      const res = await fetch("/api/sanity/signUp", {
+      const res = await fetch("/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -87,20 +87,27 @@ export default function SignUpPage() {
         }),
       });
 
-      const data = await res.text();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok) {
-        await signIn("credentials", { email, password, redirect: false });
-        router.push("/");
+        await signIn('credentials', {
+          email,
+          password,
+          redirect: false,
+        });
+
+        router.push('/');
       } else {
-        setError(data || "Erro ao criar conta");
+        setError(data.error || 'Erro ao criar conta');
       }
     } finally {
       setLoading(false);
     }
+
   }
 
   const inputClass =
+
     "border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white px-3 py-2.5 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[#46220f] placeholder-gray-400 dark:placeholder-gray-500 text-sm";
   const labelClass = "block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1";
   const sectionClass = "bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5";

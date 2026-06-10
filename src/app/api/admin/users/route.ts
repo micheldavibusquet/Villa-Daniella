@@ -32,16 +32,17 @@ export async function GET(req: Request) {
 
     // Busca todos os usuários ordenados pelo nome
     const users = await adminClient.fetch(`
-      *[_type == "user"] {
-        _id,
-        name,
-        email,
-        image,
-        role,
-        isAdmin,
-        _createdAt
-      } | order(name asc)
-    `);
+  *[_type == "user"] {
+    _id,
+    name,
+    email,
+    image,
+    role,
+    isAdmin,
+    active,
+    _createdAt
+  } | order(name asc)
+`);
 
     return NextResponse.json(users);
   } catch (error) {
@@ -72,19 +73,21 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Nao autenticado' }, { status: 401 });
     }
 
-    const { targetUserId, newRole } = await req.json();
+    const { targetUserId, newRole, active } = await req.json();
 
-    if (!targetUserId || !newRole) {
+    if (!targetUserId || (newRole === undefined && active === undefined)) {
       return NextResponse.json(
-        { error: 'targetUserId e newRole sao obrigatorios' },
+        { error: 'targetUserId e newRole ou active sao obrigatorios.' },
         { status: 400 },
       );
     }
 
-    // Valida se o role enviado é um valor permitido
-    const validRoles = ['superAdmin', 'admin', 'viewer'];
-    if (!validRoles.includes(newRole)) {
-      return NextResponse.json({ error: 'Role invalido' }, { status: 400 });
+    // Valida o role apenas quando ele for enviado
+    if (newRole !== undefined) {
+      const validRoles = ['superAdmin', 'admin', 'viewer'];
+      if (!validRoles.includes(newRole)) {
+        return NextResponse.json({ error: 'Role invalido' }, { status: 400 });
+      }
     }
 
     // Busca o usuário logado para verificar seu role
@@ -118,18 +121,23 @@ export async function PATCH(req: Request) {
       }
     }
 
-    // Sincroniza isAdmin com o role:
-    // superAdmin e admin têm acesso ao painel (isAdmin = true)
-    // viewer não tem acesso ao painel (isAdmin = false)
-    const isAdmin = newRole === 'superAdmin' || newRole === 'admin';
+    // Monta objeto de atualização dinamicamente
+    const updates: Record<string, any> = {};
 
-    // Aplica a atualização no Sanity
-    await adminClient
-      .patch(targetUserId)
-      .set({ role: newRole, isAdmin })
-      .commit();
+    if (newRole !== undefined) {
+      updates.role = newRole;
+      updates.isAdmin = newRole === 'superAdmin' || newRole === 'admin';
+    }
 
-    return NextResponse.json({ success: true, role: newRole, isAdmin });
+    if (active !== undefined) {
+      updates.active = active;
+      // Desativar remove acesso admin por segurança
+      if (!active) updates.isAdmin = false;
+    }
+
+    await adminClient.patch(targetUserId).set(updates).commit();
+
+    return NextResponse.json({ success: true, ...updates });
   } catch (error) {
     console.error('Erro ao atualizar role:', error);
     return NextResponse.json(
