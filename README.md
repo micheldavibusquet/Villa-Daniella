@@ -1,37 +1,105 @@
-# COMO INICIAR O PROJETO
+# Villa Daniella Beach Homes
 
-Pirmeiro, é necessário ter o npm instalado na máquina, aprenda a realizar a instação no link abaixo:
+Sistema web para gerenciamento de hospedagens, reservas e usuários, desenvolvido como Projeto Aplicado IV do SENAI.
+
+## Integrantes
+
+* Karen Oliveira
+* Michel Busquet
+* Guilherme Nardi
+* Gustavo Santana Jacinto
+
+## Sistema Publicado
+
+https://villa-daniella.vercel.app
+
+## Funcionalidades
+
+* Cadastro e autenticação de usuários
+* Visualização de acomodações
+* Página detalhada das acomodações
+* Sistema de reservas
+* Integração com Stripe para pagamentos
+* Avaliações de hospedagem
+* Perfil do usuário
+* Painel administrativo com Sanity CMS
+* Gerenciamento de acomodações
+* Gerenciamento de reservas
+
+## Tecnologias Utilizadas
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* Sanity CMS
+* NextAuth
+* Stripe
+* Vercel
+
+## Contexto do Projeto
+
+Este projeto foi desenvolvido como continuidade de uma solução previamente iniciada em etapas anteriores da disciplina. Ao longo deste semestre, a equipe realizou evolução funcional, correções, melhorias de interface, integração de serviços externos e estabilização da aplicação para entrega da versão atual.
+
+
+## COMO INICIAR O PROJETO
+
+### Pré-requisitos
+
+* Node.js 20
+* NPM
+
+Caso não tenha o NPM instalado, consulte:
+
 https://abre.ai/alura-aprenda-a-instalar-o-npm
 
-Segundo, é necessário usar o comando `npm run install` no diretório raiz do projeto — onde há a o arquivo `package.json`.
-terceiro, é necessário usar um dos comandos abaixo de acordo com o gerenciador de pacotes que o usuário instalou no computador.
-Obs 1: nvm install 20
-Obs 2: nvm use 20
-Obs 3: npm install --legacy-peer-deps
+### Instalação
+
+No diretório raiz do projeto (onde está localizado o arquivo `package.json`), execute:
+
 ```bash
-`npm run dev`
-# ou
-`yarn dev`
-# or
-`pnpm dev`
+nvm install 20
+nvm use 20
+npm install --legacy-peer-deps
 ```
-Quarto, abra o seguinte link do localhost padrão: [http://localhost:3000](http://localhost:3000) 
 
-Caso haja um erro semelhante ao informado abaixo é porque o arquivo `.env` não está configurado, favor o configurar ou no caso do SENAI verificar se não foi disponibilizado no AVA especificamente na entrega: AV6 - Prototipar a solução. 
+### Executar o Projeto
 
-![Captura de tela de 2024-06-29 12-05-12](https://github.com/raldineyr/BACK-END/assets/64384382/4ad201b1-470a-48d6-8c9d-6f8f5cb35fa5)
+```bash
+npm run dev
+```
+
+ou
+
+```bash
+yarn dev
+```
+
+ou
+
+```bash
+pnpm dev
+```
+
+Após iniciar o projeto, acesse:
+
+http://localhost:3000
+
+### Configuração do Ambiente
+
+Caso ocorra erro relacionado às variáveis de ambiente, verifique se o arquivo `.env` está configurado corretamente.
+
+No contexto acadêmico do SENAI, as credenciais podem ter sido disponibilizadas no AVA juntamente com a entrega.
 
 ## EXPORTAR BANCO DE DADOS
 Comando para exportar o banco de dados através do terminal.
 
-```curl https://[ADICIONE-AQUI-O-PROJECTID-DO-SANITY.IO].api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson```
+```bash
+curl https://[ADICIONE-AQUI-O-PROJECTID-DO-SANITY.IO].api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson```
 
 Exemplo: curl https://sc0ziy2k.api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson
 
-
-
 ## IMAGEM DO PROJETO: CLIENTE
-
 
 ![Captura de tela de 2024-06-29 13-16-44](https://github.com/raldineyr/algorithms-and-data-structures/assets/64384382/75d69223-db00-4d0a-b018-425242b42183)
 ![Captura de tela de 2024-06-29 13-16-55](https://github.com/raldineyr/algorithms-and-data-structures/assets/64384382/83ffff7a-5a19-4815-b429-23ecc07682e6)
@@ -42,7 +110,7 @@ Exemplo: curl https://sc0ziy2k.api.sanity.io/v2021-06-07/data/export/production?
 
 
 
-## IMAGEM DO PROJETO: ADMNISTRADOR
+## IMAGEM DO PROJETO: ADMINSTRADOR
 
 OBS: SERÁ NECESSÁRIO FAZER UM CADASTRO NO SANITY.io
 
