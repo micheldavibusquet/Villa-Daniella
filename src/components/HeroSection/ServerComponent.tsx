@@ -7,10 +7,21 @@ export const heading1 = (
       Beach Homes
     </h1>
 
-    <p className='text-[#4a4a4a] dark:text-[#ffffffea] mb-10 max-w-lg text-lg'>
-      Hospedagem exclusiva em Florianópolis, perfeita para relaxar, aproveitar o mar
-      e viver momentos inesquecíveis com conforto e privacidade.
-    </p>
+    <div className='text-[#4a4a4a] dark:text-[#ffffffea] mb-10 max-w-lg text-lg leading-relaxed'>
+      <p>
+        Hospedagem exclusiva em Florianópolis, perfeita para relaxar e
+        aproveitar o mar com conforto e privacidade.
+      </p>
+
+      <p className='mt-6'>
+        Desfrute de acomodações selecionadas, ambientes acolhedores e uma
+        localização privilegiada à beira-mar. 
+      </p>
+
+      <p className='mt-6'>
+        Aqui a sua estadia se transforma em uma lembrança inesquecível.
+      </p>
+    </div>
 
     <a href="/rooms" className='btn-primary inline-block'>
       Ver acomodações
@@ -22,7 +33,7 @@ export const section2 = (
   <div className='md:grid hidden gap-6 grid-cols-1 w-full'>
 
     {/* IMAGEM PRINCIPAL */}
-    <div className='rounded-2xl overflow-hidden h-[520px]'>
+    <div className='rounded-2xl overflow-hidden h-[460px]'>
       <Image
         src='/images/villa-daniella-1.webp'
         alt='Vista da Villa Daniella Beach Homes'
