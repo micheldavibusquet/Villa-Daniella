@@ -40,7 +40,7 @@ export const getRoom = groq`*[_type == "hotelRoom" && slug.current == $slug][0] 
     },
 
     description,
-    dimension,
+    maxGuests,
     discount,
 
     images[]{

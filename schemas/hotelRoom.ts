@@ -1,10 +1,10 @@
 import { defineField } from 'sanity';
+import { ROOM_TYPES } from '../src/libs/roomTypes';
 
-const roomTypes = [
-  { title: 'Casa', value: 'casa' },
-  { title: 'Quarto independente', value: 'quarto_independente' },
-  { title: 'Casa com espaço social privativo', value: 'casa_privativa' },
-];
+// Adapta { value, label } → { title, value } que o Sanity espera
+const roomTypes = ROOM_TYPES.filter((t) => t.value !== 'personalizado').map(
+  (t) => ({ title: t.label, value: t.value }),
+);
 
 const hotelRoom = {
   name: 'hotelRoom',
@@ -88,7 +88,7 @@ const hotelRoom = {
       type: 'text',
       validation: (Rule) => Rule.required(),
       initialValue:
-        'O horário de check-in é às 12:00 PM e o horário de checkout é às 11:59 AM. Se você deixar algum item para trás, por favor, entre em contato com a recepção.',
+        'O horário de check-in é às 14:00 PM e o horário de checkout é às 11:00 AM. Se você deixar algum item para trás, por favor, entre em contato com a recepção.',
     }),
     defineField({
       name: 'maxGuests',
