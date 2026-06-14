@@ -8,7 +8,6 @@ type Props = {
 };
 
 const RoomCard: FC<Props> = ({ room }) => {
-
   const {
     coverImage,
     images,
@@ -50,11 +49,14 @@ const RoomCard: FC<Props> = ({ room }) => {
 
       <div className='p-4 flex flex-col flex-1'>
         {/* NOME + PREÇO */}
-        <div className='flex justify-between text-xl font-semibold dark:text-white'>
-          <p>{name}</p>
-          <p>R$ {price}</p>
-        </div>
-
+        {/* NOME */}
+        <p className='text-lg font-semibold leading-snug dark:text-white line-clamp-3 min-h-[84px]'>
+          {name}
+        </p>
+        {/* PREÇO */}
+        <p className='text-xl font-bold text-primary mt-1 dark:text-white'>
+          R$ {price}
+        </p>
         {/* TIPO + CAMAS + TAMANHO */}
         <p className='pt-2 text-xs text-gray-600 dark:text-gray-400'>
           {roomTypeLabels[type] || type}
@@ -62,12 +64,10 @@ const RoomCard: FC<Props> = ({ room }) => {
             ` • ${numberOfBeds} cama${numberOfBeds > 1 ? 's' : ''}`}
           {dimension && ` • ${dimension}m²`}
         </p>
-
         {/* DESCRIÇÃO */}
         <p className='pt-3 pb-6 text-sm flex-1 dark:text-gray-300'>
           {description?.slice(0, 100)}...
         </p>
-
         {/* BOTÃO RESERVAR */}
         <Link
           href={`/rooms/${slug.current}`}
