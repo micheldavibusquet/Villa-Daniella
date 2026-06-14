@@ -95,9 +95,12 @@ No contexto acadêmico do SENAI, as credenciais podem ter sido disponibilizadas 
 Comando para exportar o banco de dados através do terminal.
 
 ```bash
-curl https://[ADICIONE-AQUI-O-PROJECTID-DO-SANITY.IO].api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson```
+curl https://[ADICIONE-AQUI-O-PROJECTID-DO-SANITY.IO].api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson
+```
 
-Exemplo: curl https://sc0ziy2k.api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson
+Exemplo:
+
+curl https://sc0ziy2k.api.sanity.io/v2021-06-07/data/export/production?types=account,booking,hotelRoom,index,review,user,verificationToken > backup.ndjson
 
 ## IMAGEM DO PROJETO: CLIENTE
 
