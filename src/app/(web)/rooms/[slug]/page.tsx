@@ -29,13 +29,14 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   // ✅ FETCH SEM SWR (SEM LOADING)
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const data = await getRoom(slug);
-        setRoom(data);
-      } catch {
-        setError(true);
-      }
-    };
+  try {
+    const data = await getRoom(slug);
+
+setRoom(data);
+  } catch {
+    setError(true);
+  }
+};
 
     fetchData();
   }, [slug]);
@@ -70,9 +71,9 @@ const RoomDetails = (props: { params: { slug: string } }) => {
       return toast.error('Mínimo de 2 diárias');
 
     try {
-      const stripe = await getStripe();
+  const stripe = await getStripe();
 
-      const { data: stripeSession } = await axios.post('/api/stripe', {
+  const { data: stripeSession } = await axios.post('/api/stripe', {
         checkinDate: checkinDate.toISOString(),
         checkoutDate: checkoutDate.toISOString(),
         adults,
@@ -90,7 +91,8 @@ const RoomDetails = (props: { params: { slug: string } }) => {
           toast.error(result.error.message || 'Erro ao redirecionar para o pagamento');
         }
       }
-    } catch {
+    } catch (error) {
+      console.error('ERRO RESERVA:', error);
       toast.error('Erro ao processar reserva');
     }
   };

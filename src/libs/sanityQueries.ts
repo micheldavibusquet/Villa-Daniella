@@ -13,12 +13,15 @@ export const getFeaturedRoomQuery = groq`*[_type == "hotelRoom" && isFeatured ==
 }`;
 
 export const getRoomsQuery = groq`*[_type == "hotelRoom"] {
-    _id, 
-    coverImage,
+    _id,
+
+    coverImage{
+      "url": asset->url
+    },
+
     description,
     dimension,
 
-    // TODO: REMOVER isBooked — disponibilidade deve ser calculada por datas de booking
     isBooked,
 
     isFeatured,
@@ -31,15 +34,21 @@ export const getRoomsQuery = groq`*[_type == "hotelRoom"] {
 
 export const getRoom = groq`*[_type == "hotelRoom" && slug.current == $slug][0] {
     _id,
-    coverImage,
+
+    coverImage{
+      "url": asset->url
+    },
+
     description,
     dimension,
     discount,
-    images,
 
-    // TODO: REMOVER isBooked — substituir por verificação de disponibilidade
+    images[]{
+      _key,
+      "url": asset->url
+    },
+
     isBooked,
-    
     isFeatured,
     name,
     numberOfBeds,

@@ -8,6 +8,7 @@ type Props = {
 };
 
 const RoomCard: FC<Props> = ({ room }) => {
+
   const {
     coverImage,
     images,
@@ -49,7 +50,7 @@ const RoomCard: FC<Props> = ({ room }) => {
 
       <div className='p-4 flex flex-col flex-1'>
         {/* NOME + PREÇO */}
-          <div className='flex justify-between text-xl font-semibold dark:text-white'>
+        <div className='flex justify-between text-xl font-semibold dark:text-white'>
           <p>{name}</p>
           <p>R$ {price}</p>
         </div>
