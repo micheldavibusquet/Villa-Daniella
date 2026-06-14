@@ -1,39 +1,58 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useState, useEffect } from 'react';
+import { PUBLIC_ROOM_TYPES } from '@/libs/roomTypes';
+import { getRooms } from '@/libs/apis';
 
 type Props = {
   roomTypeFilter: string;
   setRoomTypeFilter: (value: string) => void;
 };
 
-const Search: FC<Props> = ({
-  roomTypeFilter,
-  setRoomTypeFilter,
-}) => {
+const Search: FC<Props> = ({ roomTypeFilter, setRoomTypeFilter }) => {
   const router = useRouter();
 
   const [capacity, setCapacity] = useState('all');
+  const [maxGuests, setMaxGuests] = useState('all');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  const handleRoomTypeChange = (
-    event: ChangeEvent<HTMLSelectElement>
-  ) => {
+  // Valores máximos calculados a partir das acomodações reais
+  const [maxBeds, setMaxBeds] = useState(1);
+  const [maxGuestsLimit, setMaxGuestsLimit] = useState(2);
+
+  // Busca as acomodações e calcula os limites dos filtros
+  useEffect(() => {
+    const fetchLimits = async () => {
+      try {
+        const rooms = await getRooms();
+        if (rooms && rooms.length > 0) {
+          const beds = Math.max(...rooms.map((r) => r.numberOfBeds ?? 1));
+          const guests = Math.max(...rooms.map((r) => r.maxGuests ?? 2));
+          setMaxBeds(beds);
+          setMaxGuestsLimit(guests);
+        }
+      } catch (error) {
+        console.error('Erro ao calcular limites dos filtros:', error);
+      }
+    };
+    fetchLimits();
+  }, []);
+
+  const handleRoomTypeChange = (event: ChangeEvent<HTMLSelectElement>) => {
     setRoomTypeFilter(event.target.value);
   };
 
   const handleFilterClick = () => {
     router.push(
-      `/rooms?roomType=${roomTypeFilter}&capacity=${capacity}&minPrice=${minPrice}&maxPrice=${maxPrice}`
+      `/rooms?roomType=${roomTypeFilter}&capacity=${capacity}&maxGuests=${maxGuests}&minPrice=${minPrice}&maxPrice=${maxPrice}`,
     );
   };
 
   return (
-<section className='bg-tertiary-light dark:bg-gray-800 px-4 py-6 rounded-lg mt-8'>
-  <div className='container mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 items-end'>
-
+    <section className='bg-tertiary-light dark:bg-gray-800 px-4 py-6 rounded-lg mt-8'>
+      <div className='container mx-auto grid grid-cols-1 md:grid-cols-5 gap-4 items-end'>
         {/* TIPO DE ACOMODAÇÃO */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black dark:text-gray-100'>
@@ -46,22 +65,18 @@ const Search: FC<Props> = ({
             className='w-full px-4 py-2 capitalize rounded leading-tight bg-white dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 focus:outline-none'
           >
             <option value='all'>Tudo</option>
-            <option value='quarto_independente'>
-              Quarto independente
-            </option>
-            <option value='casa'>
-              Casa com área social coletiva
-            </option>
-            <option value='casa_privativa'>
-              Casa com área social privativa
-            </option>
+            {PUBLIC_ROOM_TYPES.map(({ value, label }) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
           </select>
         </div>
 
-        {/* CAPACIDADE */}
+        {/* CAMAS */}
         <div>
           <label className='block text-sm font-medium mb-2 text-black dark:text-gray-100'>
-            Capacidade
+            Camas
           </label>
 
           <select
@@ -70,10 +85,40 @@ const Search: FC<Props> = ({
             className='w-full px-4 py-2 rounded leading-tight bg-white dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 focus:outline-none'
           >
             <option value='all'>Todas</option>
-            <option value='1'>1+ cama</option>
-            <option value='2'>2+ camas</option>
-            <option value='3'>3+ camas</option>
-            <option value='4'>4+ camas</option>
+            {Array.from({ length: maxBeds }, (_, i) => i + 1).map((n) => {
+              const isMax = n === maxBeds;
+              const plural = n > 1 ? 's' : '';
+              return (
+                <option key={n} value={n}>
+                  {isMax ? `${n} cama${plural}` : `${n} ou mais cama${plural}`}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+
+        {/* HÓSPEDES */}
+        <div>
+          <label className='block text-sm font-medium mb-2 text-black dark:text-gray-100'>
+            Hóspedes
+          </label>
+
+          <select
+            value={maxGuests}
+            onChange={(e) => setMaxGuests(e.target.value)}
+            className='w-full px-4 py-2 rounded leading-tight bg-white dark:bg-gray-800 dark:text-white border border-gray-200 dark:border-gray-700 focus:outline-none'
+          >
+            <option value='all'>Todos</option>
+            {Array.from({ length: maxGuestsLimit - 1 }, (_, i) => i + 2).map(
+              (n) => {
+                const isMax = n === maxGuestsLimit;
+                return (
+                  <option key={n} value={n}>
+                    {isMax ? `${n} hóspedes` : `${n} ou mais hóspedes`}
+                  </option>
+                );
+              },
+            )}
           </select>
         </div>
 

@@ -8,7 +8,7 @@ export async function GET() {
   *[_type == "hotelRoom"] {
     _id,
     description,
-    dimension,
+    maxGuests,
     isBooked,
     isFeatured,
     name,
@@ -83,9 +83,16 @@ export async function POST(req: Request) {
       description: description ?? '',
       type: type ?? 'basicRoom',
       price: Number(price),
-      dimension: Number(maxGuests ?? 2),
+      maxGuests: Number(maxGuests ?? 2),
       numberOfBeds: Number(numberOfBeds),
-      slug: slug ?? { current: name.toLowerCase().replace(/\s+/g, '-') },
+      slug: slug ?? {
+        current: name
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, ''),
+      },
       isFeatured: isFeatured ?? false,
       isBooked: isBooked ?? false,
       coverImage,

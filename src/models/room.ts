@@ -22,7 +22,7 @@ export type Room = {
   _id: string;
   coverImage: CoverImage;
   description: string;
-  dimension: string;
+  maxGuests: number;
   discount: number;
   images: Image[];
   isBooked: boolean;

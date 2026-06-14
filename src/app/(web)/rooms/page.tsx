@@ -14,6 +14,7 @@ export default function RoomsPage() {
 
   const roomType = searchParams.get('roomType') || 'all';
   const capacity = searchParams.get('capacity') || 'all';
+  const maxGuests = searchParams.get('maxGuests') || 'all';
   const minPrice = searchParams.get('minPrice') || '';
   const maxPrice = searchParams.get('maxPrice') || '';
 
@@ -37,17 +38,20 @@ export default function RoomsPage() {
 
     const matchesCapacity =
       capacity === 'all' || (room.numberOfBeds ?? 0) >= Number(capacity);
-
+    const matchesGuests =
+      maxGuests === 'all' || (room.maxGuests ?? 0) >= Number(maxGuests);
     const matchesPrice =
       (minPrice ? room.price >= Number(minPrice) : true) &&
       (maxPrice ? room.price <= Number(maxPrice) : true);
 
-    return matchesType && matchesCapacity && matchesPrice;
+    return matchesType && matchesCapacity && matchesGuests && matchesPrice;
   });
 
   return (
     <div className='max-w-7xl mx-auto px-4 py-8'>
-      <h1 className='text-2xl font-semibold mb-6 dark:text-white'>Acomodações</h1>
+      <h1 className='text-2xl font-semibold mb-6 dark:text-white'>
+        Acomodações
+      </h1>
 
       {filteredRooms.length > 0 ? (
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>

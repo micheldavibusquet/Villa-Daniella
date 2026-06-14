@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState } from 'react';
+import Image from 'next/image';
 
 type Photo = {
   url?: string;
@@ -12,43 +12,42 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
 
   if (!photos || photos.length === 0) return null;
 
-  const getUrl = (photo: Photo) => photo?.url || "/placeholder.jpg";
+  const getUrl = (photo: Photo) => photo?.url || '/placeholder.jpg';
 
   const goPrev = () => {
     setSelectedIndex((prev) =>
-      prev === 0 ? photos.length - 1 : (prev as number) - 1
+      prev === 0 ? photos.length - 1 : (prev as number) - 1,
     );
   };
 
   const goNext = () => {
     setSelectedIndex((prev) =>
-      prev === photos.length - 1 ? 0 : (prev as number) + 1
+      prev === photos.length - 1 ? 0 : (prev as number) + 1,
     );
   };
 
   return (
-    <div className="container mx-auto">
-
+    <div className='container mx-auto px-6 md:px-10 xl:px-16'>
       {/* FOTO PRINCIPAL */}
       <div
-        className="w-full h-[520px] overflow-hidden rounded-xl mb-4 cursor-pointer"
+        className='w-full h-[520px] overflow-hidden rounded-xl mb-4 cursor-pointer'
         onClick={() => setSelectedIndex(0)}
       >
         <Image
           src={getUrl(photos[0])}
-          alt="Foto principal"
+          alt='Foto principal'
           width={1200}
           height={800}
-          className="w-full h-full object-cover"
+          className='w-full h-full object-cover'
         />
       </div>
 
       {/* MINIATURAS */}
-      <div className="flex gap-3 flex-wrap">
+      <div className='flex gap-3 flex-wrap'>
         {photos.map((photo, index) => (
           <div
             key={index}
-            className="w-24 h-24 overflow-hidden rounded-lg cursor-pointer"
+            className='w-24 h-24 overflow-hidden rounded-lg cursor-pointer'
             onClick={() => setSelectedIndex(index)}
           >
             <Image
@@ -56,7 +55,7 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
               alt={`Foto ${index}`}
               width={200}
               height={200}
-              className="w-full h-full object-cover"
+              className='w-full h-full object-cover'
             />
           </div>
         ))}
@@ -64,11 +63,10 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
 
       {/* MODAL COM NAVEGAÇÃO */}
       {selectedIndex !== null && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50">
-
+        <div className='fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50'>
           <button
             onClick={() => setSelectedIndex(null)}
-            className="absolute top-5 right-5 text-white text-3xl z-50"
+            className='absolute top-5 right-5 text-white text-3xl z-50'
           >
             ✕
           </button>
@@ -79,22 +77,22 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
               e.stopPropagation();
               goPrev();
             }}
-            className="absolute left-5 text-white text-4xl z-50"
+            className='absolute left-5 text-white text-4xl z-50'
           >
             ‹
           </button>
 
           {/* IMAGEM */}
           <div
-            className="max-w-5xl w-full px-4"
+            className='max-w-5xl w-full px-4'
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={getUrl(photos[selectedIndex])}
-              alt="Foto ampliada"
+              alt='Foto ampliada'
               width={1600}
               height={1000}
-              className="w-full h-auto rounded-xl"
+              className='w-full h-auto rounded-xl'
             />
           </div>
 
@@ -104,14 +102,14 @@ export default function HotelPhotoGallery({ photos }: { photos: Photo[] }) {
               e.stopPropagation();
               goNext();
             }}
-            className="absolute right-5 text-white text-4xl z-50"
+            className='absolute right-5 text-white text-4xl z-50'
           >
             ›
           </button>
 
           {/* FECHAR AO CLICAR FORA */}
           <div
-            className="absolute inset-0"
+            className='absolute inset-0'
             onClick={() => setSelectedIndex(null)}
           />
         </div>

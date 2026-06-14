@@ -29,14 +29,14 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   // ✅ FETCH SEM SWR (SEM LOADING)
   useEffect(() => {
     const fetchData = async () => {
-  try {
-    const data = await getRoom(slug);
+      try {
+        const data = await getRoom(slug);
 
-setRoom(data);
-  } catch {
-    setError(true);
-  }
-};
+        setRoom(data);
+      } catch {
+        setError(true);
+      }
+    };
 
     fetchData();
   }, [slug]);
@@ -67,8 +67,7 @@ setRoom(data);
 
     const numberOfDays = calcNumDays();
 
-    if (numberOfDays < 2)
-      return toast.error('Mínimo de 2 diárias');
+    if (numberOfDays < 2) return toast.error('Mínimo de 2 diárias');
 
     const discount = room.discount || 0;
     const pricePerDay = room.price - (room.price / 100) * discount;
@@ -152,53 +151,57 @@ setRoom(data);
     fetchBookedDates();
   }, [room]);
 
-  if (error) return <div className="p-10">Erro ao carregar</div>;
+  if (error) return <div className='p-10'>Erro ao carregar</div>;
 
   return (
     <div>
-
       {/* GALERIA */}
       {room && <HotelPhotoGallery photos={room.images || []} />}
 
       {/* CONTEÚDO */}
       {room && (
-        <div className="container mx-auto px-4 mt-20 mb-20">
-          <div className="grid md:grid-cols-12 gap-10">
-
-            <div className="md:col-span-8">
-
-              <h1 className="text-3xl font-bold mb-6 dark:text-white">
+        <div className='container mx-auto px-6 md:px-10 xl:px-16 mt-20 mb-20'>
+          <div className='grid md:grid-cols-12 gap-10'>
+            <div className='md:col-span-8'>
+              <h1 className='text-3xl font-bold mb-6 dark:text-white'>
                 {room.name}
               </h1>
 
-              <div className="flex flex-wrap gap-4 mb-10">
+              <div className='flex flex-wrap gap-4 mb-10'>
                 {(room.offeredAmenities || []).map((amenity) => (
                   <div
                     key={amenity._key}
-                    className="w-32 h-28 bg-gray-100 dark:bg-gray-700 rounded-lg flex flex-col items-center justify-center"
+                    className='w-32 h-28 bg-gray-100 dark:bg-gray-700 rounded-lg flex flex-col items-center justify-center'
                   >
-                    <i className={`fa-solid ${amenity.icon} dark:text-gray-200`} />
-                    <p className="text-xs mt-2 dark:text-gray-200">{amenity.amenity}</p>
+                    <i
+                      className={`fa-solid ${amenity.icon} dark:text-gray-200`}
+                    />
+                    <p className='text-xs mt-2 dark:text-gray-200'>
+                      {amenity.amenity}
+                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className="mb-12">
-                <h2 className="text-2xl font-semibold mb-3 dark:text-white">Descrição</h2>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+              <div className='mb-12'>
+                <h2 className='text-2xl font-semibold mb-3 dark:text-white'>
+                  Descrição
+                </h2>
+                <p className='text-gray-700 dark:text-gray-300 leading-relaxed'>
                   {room.description}
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-                <h3 className="font-semibold mb-4 dark:text-white">Avaliações</h3>
+              <div className='bg-white dark:bg-gray-800 shadow rounded-lg p-6'>
+                <h3 className='font-semibold mb-4 dark:text-white'>
+                  Avaliações
+                </h3>
                 <RoomReview roomId={room._id} />
               </div>
             </div>
 
-            <div className="md:col-span-4">
-              <div className="sticky top-20 bg-white dark:bg-gray-800 shadow dark:shadow-gray-900 rounded-xl p-4">
-
+            <div className='md:col-span-4'>
+              <div className='sticky top-20 bg-white dark:bg-gray-800 shadow dark:shadow-gray-900 rounded-xl p-4'>
                 <BookRoomCta
                   discount={room.discount}
                   price={room.price}
@@ -218,7 +221,6 @@ setRoom(data);
                 />
               </div>
             </div>
-
           </div>
         </div>
       )}

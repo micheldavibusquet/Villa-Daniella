@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-<header className='flex items-center justify-between px-10 py-4 w-full border-b border-gray-100 dark:border-gray-800 dark:bg-gray-900'>
+    <header className='flex items-center justify-between px-10 py-4 w-full border-b border-gray-100 dark:border-gray-800 dark:bg-gray-900'>
       {/* LOGO */}
       <div className='flex items-center'>
         <Link href='/'>
@@ -68,7 +68,7 @@ const Header = () => {
           <li className='hover:-translate-y-1 duration-300 transition-all'>
             <Link
               href='/admin'
-              className='font-medium border-b-2 border-primary pb-0.5'
+              className='font-medium bg-primary text-white px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity'
             >
               Painel Admin
             </Link>
