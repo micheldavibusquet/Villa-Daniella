@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 import { getRoom } from '@/libs/apis';
 import HotelPhotoGallery from '@/components/HotelPhotoGallery/HotelPhotoGallery';
 import BookRoomCta from '@/components/BookRoomCta/BookRoomCta';
 import toast from 'react-hot-toast';
-import { getStripe } from '@/libs/stripe';
 import RoomReview from '@/components/RoomReview/RoomReview';
 import { Room } from '@/models/room';
 
@@ -25,6 +24,7 @@ const RoomDetails = (props: { params: { slug: string } }) => {
   const [noOfChildren, setNoOfChildren] = useState(0);
   const [isBooked, setIsBooked] = useState(false);
   const [bookedDates, setBookedDates] = useState<Date[]>([]);
+  const router = useRouter();
 
   // ✅ FETCH SEM SWR (SEM LOADING)
   useEffect(() => {
@@ -56,7 +56,7 @@ setRoom(data);
     return Math.ceil(timeDiff / (24 * 60 * 60 * 1000));
   };
 
-  const handleBookNowClick = async () => {
+  const handleBookNowClick = () => {
     if (!room) return;
 
     if (!checkinDate || !checkoutDate)
@@ -70,31 +70,28 @@ setRoom(data);
     if (numberOfDays < 2)
       return toast.error('Mínimo de 2 diárias');
 
-    try {
-  const stripe = await getStripe();
+    const discount = room.discount || 0;
+    const pricePerDay = room.price - (room.price / 100) * discount;
+    const subtotal = pricePerDay * numberOfDays;
+    const serviceFee = Math.round(subtotal * 0.1);
+    const totalPrice = subtotal + serviceFee;
 
-  const { data: stripeSession } = await axios.post('/api/stripe', {
-        checkinDate: checkinDate.toISOString(),
-        checkoutDate: checkoutDate.toISOString(),
-        adults,
-        children: noOfChildren,
-        numberOfDays,
-        hotelRoomSlug: room.slug.current,
-      });
+    const params = new URLSearchParams({
+      roomSlug: room.slug.current,
+      roomName: room.name,
+      checkinDate: checkinDate.toISOString().split('T')[0],
+      checkoutDate: checkoutDate.toISOString().split('T')[0],
+      adults: String(adults),
+      children: String(noOfChildren),
+      numberOfDays: String(numberOfDays),
+      subtotal: String(subtotal),
+      serviceFee: String(serviceFee),
+      totalPrice: String(totalPrice),
+      discount: String(discount),
+      pricePerDay: String(pricePerDay),
+    });
 
-      if (stripe) {
-        const result = await stripe.redirectToCheckout({
-          sessionId: stripeSession.id,
-        });
-
-        if (result?.error) {
-          toast.error(result.error.message || 'Erro ao redirecionar para o pagamento');
-        }
-      }
-    } catch (error) {
-      console.error('ERRO RESERVA:', error);
-      toast.error('Erro ao processar reserva');
-    }
+    router.push(`/payment?${params.toString()}`);
   };
 
   useEffect(() => {
