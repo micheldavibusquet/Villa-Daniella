@@ -11,13 +11,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className='mt-16'>
-      <div className='container mx-auto px-6 md:px-10'>
+<footer className='mt-16 dark:bg-gray-900 dark:border-t dark:border-gray-800'>
+  <div className='container mx-auto px-6 md:px-10'>
         <Link href='/' className='font-black text-tertiary-dark'>
           Villa Daniella – Beach Homes
         </Link>
 
-        <h4 className='font-semibold text-[40px] py-6'>Contatos</h4>
+        <h4 className='font-semibold text-[40px] py-6 dark:text-white'>Contatos</h4>
 
         <div className='flex flex-wrap gap-16 items-center justify-between'>
           <div className='flex-1'>
@@ -25,12 +25,12 @@ const Footer = () => {
 
             <div className='flex items-center py-4'>
               <BsFillSendFill />
-              <p className='ml-2'>contato@villadaniella.com</p>
+              <p className='ml-2 dark:text-gray-300'>contato@villadaniella.com</p>
             </div>
 
             <div className='flex items-center'>
               <BsTelephoneOutbound />
-              <p className='ml-2'>+55 48 3207-7255</p>
+              <p className='ml-2 dark:text-gray-300'>+55 48 3207-7255</p>
             </div>
 
             <div className='flex items-center pt-4'>

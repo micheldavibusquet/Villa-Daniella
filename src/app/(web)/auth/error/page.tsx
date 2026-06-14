@@ -25,7 +25,7 @@ export default function AuthErrorPage() {
       </button>
 
       {error && (
-        <p className="text-sm text-gray-500">Erro: {error}</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Erro: {error}</p>
       )}
     </div>
   );

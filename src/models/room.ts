@@ -1,6 +1,5 @@
 type CoverImage = {
-  url?: string;
-  assetUrl?: string;
+  url: string;
 };
 
 export type Image = {

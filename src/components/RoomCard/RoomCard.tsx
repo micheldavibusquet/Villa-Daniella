@@ -29,13 +29,13 @@ const RoomCard: FC<Props> = ({ room }) => {
   const secondImage = images?.[0]?.url;
 
   return (
-    <div className='rounded-xl w-72 mb-10 mx-auto md:mx-0 overflow-hidden text-black bg-white shadow-sm flex flex-col'>
+    <div className='rounded-xl w-72 mb-10 mx-auto md:mx-0 overflow-hidden text-black dark:text-white bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900 flex flex-col'>
       {/* FOTO COM HOVER */}
       <Link href={`/rooms/${slug.current}`}>
         <div className='h-60 overflow-hidden relative group cursor-pointer'>
           {/* IMAGEM PRINCIPAL */}
           <Image
-            src={coverImage?.url || coverImage?.assetUrl || '/placeholder.jpg'}
+            src={coverImage?.url || '/placeholder.jpg'}
             alt={name}
             width={400}
             height={300}
@@ -49,13 +49,13 @@ const RoomCard: FC<Props> = ({ room }) => {
 
       <div className='p-4 flex flex-col flex-1'>
         {/* NOME + PREÇO */}
-        <div className='flex justify-between text-xl font-semibold'>
+          <div className='flex justify-between text-xl font-semibold dark:text-white'>
           <p>{name}</p>
           <p>R$ {price}</p>
         </div>
 
         {/* TIPO + CAMAS + TAMANHO */}
-        <p className='pt-2 text-xs text-gray-600'>
+        <p className='pt-2 text-xs text-gray-600 dark:text-gray-400'>
           {roomTypeLabels[type] || type}
           {numberOfBeds &&
             ` • ${numberOfBeds} cama${numberOfBeds > 1 ? 's' : ''}`}
@@ -63,7 +63,7 @@ const RoomCard: FC<Props> = ({ room }) => {
         </p>
 
         {/* DESCRIÇÃO */}
-        <p className='pt-3 pb-6 text-sm flex-1'>
+        <p className='pt-3 pb-6 text-sm flex-1 dark:text-gray-300'>
           {description?.slice(0, 100)}...
         </p>
 

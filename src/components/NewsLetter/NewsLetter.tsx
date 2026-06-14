@@ -35,7 +35,7 @@ const NewsLetter = () => {
           placeholder="Digite o seu email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="px-6 py-3 rounded-lg text-black w-full md:w-96"
+          className="px-6 py-3 rounded-lg text-black w-full md:w-96 dark:text-gray-900"
         />
 
         <button
