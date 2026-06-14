@@ -17,7 +17,7 @@ const RoomCard: FC<Props> = ({ room }) => {
     description,
     slug,
     numberOfBeds,
-    dimension,
+    maxGuests,
   } = room;
 
   const roomTypeLabels: Record<string, string> = {
@@ -25,8 +25,6 @@ const RoomCard: FC<Props> = ({ room }) => {
     quarto_independente: 'Quarto independente',
     casa_privativa: 'Casa com espaço social privativo',
   };
-
-  const secondImage = images?.[0]?.url;
 
   return (
     <div className='rounded-xl w-72 mb-10 mx-auto md:mx-0 overflow-hidden text-black dark:text-white bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900 flex flex-col'>
@@ -62,7 +60,7 @@ const RoomCard: FC<Props> = ({ room }) => {
           {roomTypeLabels[type] || type}
           {numberOfBeds &&
             ` • ${numberOfBeds} cama${numberOfBeds > 1 ? 's' : ''}`}
-          {dimension && ` • ${dimension}m²`}
+          {maxGuests && ` • até ${maxGuests} hóspedes`}
         </p>
         {/* DESCRIÇÃO */}
         <p className='pt-3 pb-6 text-sm flex-1 dark:text-gray-300'>

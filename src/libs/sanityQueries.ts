@@ -20,7 +20,7 @@ export const getRoomsQuery = groq`*[_type == "hotelRoom"] {
     },
 
     description,
-    dimension,
+    maxGuests,
 
     isBooked,
 

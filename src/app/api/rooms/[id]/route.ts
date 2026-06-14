@@ -29,7 +29,7 @@ export async function PATCH(
     if (description !== undefined) patch = patch.set({ description });
     if (type) patch = patch.set({ type });
     if (price) patch = patch.set({ price: Number(price) });
-    if (maxGuests) patch = patch.set({ dimension: Number(maxGuests) });
+    if (maxGuests) patch = patch.set({ maxGuests: Number(maxGuests) });
     if (numberOfBeds) patch = patch.set({ numberOfBeds: Number(numberOfBeds) });
 
     // Troca ou remove a foto de capa

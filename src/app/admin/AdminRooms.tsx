@@ -10,7 +10,7 @@ type Room = {
   description: string;
   type: string;
   price: number;
-  dimension: number;
+  maxGuests: number;
   numberOfBeds: number;
   slug: { current: string };
   isBooked?: boolean;
@@ -262,7 +262,7 @@ export default function AdminRooms({
       description: room.description ?? '',
       type: room.type ?? 'casa_inteira',
       price: String(room.price ?? ''),
-      maxGuests: String(room.dimension ?? ''),
+      maxGuests: String(room.maxGuests ?? ''),
       numberOfBeds: String(room.numberOfBeds ?? ''),
     });
     setCoverFile(null);
@@ -843,7 +843,7 @@ export default function AdminRooms({
                       {room.numberOfBeds}
                     </td>
                     <td style={{ ...s.td, textAlign: 'center' }}>
-                      {room.dimension ?? '--'}
+                      {room.maxGuests ?? '--'}
                     </td>
                     <td style={s.td}>
                       <span style={s.price}>
