@@ -53,11 +53,10 @@ const hotelRoom = {
       type: 'array',
       of: [
         {
-          type: 'object',
-          fields: [
-            { name: 'url', type: 'url', title: 'URL' },
-            { name: 'file', type: 'file', title: 'File' },
-          ],
+          type: 'image',
+          options: {
+            hotspot: true,
+          },
         },
       ],
       validation: Rule =>
@@ -66,11 +65,10 @@ const hotelRoom = {
     defineField({
       name: 'coverImage',
       title: 'Capa da imagem',
-      type: 'object',
-      fields: [
-        { name: 'url', type: 'url', title: 'URL' },
-        { name: 'file', type: 'file', title: 'File' },
-      ],
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
       validation: Rule => Rule.required().error('A Capa da imagem está sendo requerida'),
     }),
     defineField({
@@ -139,3 +137,4 @@ const hotelRoom = {
 };
 
 export default hotelRoom;
+

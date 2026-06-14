@@ -62,7 +62,6 @@ export async function POST(req: Request) {
 
   try {
     const room = await getRoom(hotelRoomSlug);
-
     if (!room) {
       return new NextResponse(
         'Acomodação não encontrada',
@@ -115,6 +114,7 @@ export async function POST(req: Request) {
         payment_method_types: ['card'],
 
         success_url: `${origin}/booking/confirm?session_id={CHECKOUT_SESSION_ID}&userId=${userId}&checkinDate=${formattedCheckinDate}&checkoutDate=${formattedCheckoutDate}&numberOfDays=${numberOfDays}&totalPrice=${grandTotal}`,
+
         cancel_url: `${origin}/rooms`,
 
         metadata: {
@@ -134,11 +134,15 @@ export async function POST(req: Request) {
       status: 200,
       statusText: 'Sessão de pagamento criada',
     });
-  } catch (error: any) {
-    console.log('Falha no pagamento', error);
 
-    return new NextResponse(
-      'Erro ao criar sessão de pagamento',
+  } catch (error: any) {
+    console.error('ERRO STRIPE COMPLETO:', error);
+
+    return NextResponse.json(
+      {
+        error: error?.message,
+        stack: error?.stack,
+      },
       { status: 500 }
     );
   }
