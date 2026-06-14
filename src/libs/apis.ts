@@ -37,7 +37,7 @@ export async function getRoom(slug: string) {
 }
 
 export const createBooking = async (data: any) => {
-  return client.create({
+  return adminClient.create({
     _type: 'booking',
 
     adults: data.adults,
