@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { client, adminClient } from '@/libs/sanity';
-import { getRoomsQuery } from '@/libs/sanityQueries';
+import { adminClient } from '@/libs/sanity';
+import { DEFAULT_SPECIAL_NOTE } from '@/libs/roomTypes';
 
 export async function GET() {
   try {
@@ -46,6 +46,7 @@ export async function POST(req: Request) {
       price,
       maxGuests,
       numberOfBeds,
+      specialNote,
       slug,
       isFeatured,
       isBooked,
@@ -85,6 +86,7 @@ export async function POST(req: Request) {
       price: Number(price),
       maxGuests: Number(maxGuests ?? 2),
       numberOfBeds: Number(numberOfBeds),
+      specialNote: specialNote || DEFAULT_SPECIAL_NOTE,
       slug: slug ?? {
         current: name
           .toLowerCase()
@@ -97,7 +99,6 @@ export async function POST(req: Request) {
       isBooked: isBooked ?? false,
       coverImage,
       images,
-      amenities: [],
     });
 
     return NextResponse.json(newRoom, { status: 201 });

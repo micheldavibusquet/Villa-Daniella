@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { ROOM_TYPES } from '@/libs/roomTypes';
+import { ROOM_TYPES, DEFAULT_SPECIAL_NOTE } from '@/libs/roomTypes';
 
 type Room = {
   _id: string;
@@ -12,6 +12,7 @@ type Room = {
   price: number;
   maxGuests: number;
   numberOfBeds: number;
+  specialNote?: string;
   slug: { current: string };
   isBooked?: boolean;
   coverImage?: { url?: string; assetUrl?: string };
@@ -21,6 +22,7 @@ type Room = {
 type RoomForm = {
   name: string;
   description: string;
+  specialNote: string;
   type: string;
   price: string;
   maxGuests: string;
@@ -30,6 +32,7 @@ type RoomForm = {
 const emptyForm: RoomForm = {
   name: '',
   description: '',
+  specialNote: DEFAULT_SPECIAL_NOTE,
   type: 'casa_inteira',
   price: '',
   maxGuests: '',
@@ -171,6 +174,7 @@ export default function AdminRooms({
         price: Number(form.price),
         maxGuests: Number(form.maxGuests || 2),
         numberOfBeds: Number(form.numberOfBeds),
+        specialNote: form.specialNote,
         slug: { current: form.name.toLowerCase().replace(/\s+/g, '-') },
         isFeatured: false,
         isBooked: false,
@@ -216,6 +220,7 @@ export default function AdminRooms({
         price: Number(form.price),
         maxGuests: Number(form.maxGuests),
         numberOfBeds: Number(form.numberOfBeds),
+        specialNote: form.specialNote,
         coverImageAssetId,
         removeCover,
         addGalleryAssetIds,
@@ -264,6 +269,7 @@ export default function AdminRooms({
       price: String(room.price ?? ''),
       maxGuests: String(room.maxGuests ?? ''),
       numberOfBeds: String(room.numberOfBeds ?? ''),
+      specialNote: room.specialNote ?? DEFAULT_SPECIAL_NOTE,
     });
     setCoverFile(null);
     setCoverPreview(null);
@@ -520,6 +526,15 @@ export default function AdminRooms({
               onChange={handleChange}
             />
           </div>
+          <div style={s.formGroup}>
+            <label style={s.label}>Anotacao especial</label>
+            <textarea
+              style={{ ...s.input, ...s.textarea }}
+              name='specialNote'
+              value={form.specialNote}
+              onChange={handleChange}
+            />
+          </div>
 
           {uploading && <div style={s.uploadStatus}>Enviando imagens...</div>}
 
@@ -762,6 +777,24 @@ export default function AdminRooms({
               value={form.description}
               onChange={handleChange}
               placeholder='Descreva a acomodacao...'
+            />
+            <span
+              style={{
+                fontSize: '11px',
+                marginTop: '4px',
+                color: form.description.length >= 100 ? '#8ab88a' : '#b88a8a',
+              }}
+            >
+              {form.description.length}/100 caracteres minimos
+            </span>
+          </div>
+          <div style={s.formGroup}>
+            <label style={s.label}>Anotacao especial</label>
+            <textarea
+              style={{ ...s.input, ...s.textarea }}
+              name='specialNote'
+              value={form.specialNote}
+              onChange={handleChange}
             />
           </div>
           {uploading && (

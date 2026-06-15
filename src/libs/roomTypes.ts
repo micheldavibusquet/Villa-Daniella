@@ -26,3 +26,9 @@ export const ROOM_TYPES = [
 export const PUBLIC_ROOM_TYPES = ROOM_TYPES.filter(
   (t) => t.value !== 'personalizado',
 );
+/**
+ * Anotação especial padrão das acomodações.
+ * Usada como valor inicial no schema, na API e no formulário admin.
+ */
+export const DEFAULT_SPECIAL_NOTE =
+  'O horário de check-in é às 14:00 PM e o horário de checkout é às 11:00 AM. Se você deixar algum item para trás, por favor, entre em contato com a recepção.';
