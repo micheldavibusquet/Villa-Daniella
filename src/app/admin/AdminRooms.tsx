@@ -175,7 +175,6 @@ export default function AdminRooms({
         maxGuests: Number(form.maxGuests || 2),
         numberOfBeds: Number(form.numberOfBeds),
         specialNote: form.specialNote,
-        slug: { current: form.name.toLowerCase().replace(/\s+/g, '-') },
         isFeatured: false,
         isBooked: false,
         coverImageAssetId,
