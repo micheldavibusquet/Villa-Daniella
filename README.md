@@ -1,187 +1,97 @@
-<div align="center">
-
 # 🏖️ Villa Daniella Beach Homes
 
-### Sistema de Gestão Hoteleira para Casas de Praia
+> Sistema web full-stack de gerenciamento de casas de temporada para uma pousada frente-mar em Florianópolis. Reservas online, pagamento integrado e painel administrativo em um só lugar.
 
-*Plataforma web completa para reserva e gerenciamento de acomodações à beira-mar*
+[![Next.js](https://img.shields.io/badge/Next.js-13-000000?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Sanity](https://img.shields.io/badge/Sanity-CMS-F03E2F?logo=sanity&logoColor=white)](https://www.sanity.io/)
+[![Stripe](https://img.shields.io/badge/Stripe-635BFF?logo=stripe&logoColor=white)](https://stripe.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 
-<br>
-
-[![Next.js](https://img.shields.io/badge/Next.js-13-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Sanity](https://img.shields.io/badge/Sanity-F03E2F?style=for-the-badge&logo=sanity&logoColor=white)](https://www.sanity.io/)
-[![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://stripe.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-
-[![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow?style=flat-square)]()
-[![License](https://img.shields.io/badge/licen%C3%A7a-acad%C3%AAmica-blue?style=flat-square)]()
-
-[🔗 Ver Demo](http://villa-daniella.vercel.app/) · [✨ Funcionalidades](#-funcionalidades) · [🚀 Como Rodar](#-como-rodar-localmente) · [👥 Equipe](#-equipe)
-
-</div>
+🔗 **Demo:** [villa-daniella.vercel.app](https://villa-daniella.vercel.app)
 
 ---
 
-## 📖 Sobre o Projeto
+## 📌 Sobre o projeto
 
-O **Villa Daniella Beach Homes** é uma plataforma web de gestão hoteleira desenvolvida para administrar e comercializar acomodações de praia. O sistema oferece uma experiência completa, desde a navegação e busca de acomodações pelo hóspede até o processamento de pagamentos e a administração do negócio por um painel exclusivo.
+A Villa Daniella é uma pousada frente-mar que controlava reservas e hóspedes em planilhas e plataformas externas, sem integração — o que gerava duplicidade de reservas, dados fragmentados e dependência de comissões de terceiros.
 
-O projeto foi construído com foco em **boas práticas de engenharia de software**: arquitetura organizada, código tipado, fonte única de verdade para dados compartilhados, autenticação segura e separação clara de responsabilidades entre as camadas pública, administrativa e de conteúdo.
+Este sistema resolve essa dor com uma **plataforma própria, responsiva e escalável**, que centraliza reservas, pagamentos e gestão, devolvendo ao negócio o controle total sobre suas operações e sobre a experiência do hóspede.
 
----
-
-## 🔗 Demo ao Vivo
-
-> 🌐 **Acesse:** [villa-daniella.vercel.app](http://villa-daniella.vercel.app/)
+> 💬 *"…a base apresentada já está sólida, funcional e alinhada com necessidades reais do mercado."*
+> — Diogo Rangel, Villa Daniella (cliente)
 
 ---
 
 ## ✨ Funcionalidades
 
-### 🏠 Área Pública (Hóspede)
-- **Catálogo de acomodações** com cartões visuais (foto, preço, capacidade)
-- **Busca dinâmica** por tipo de acomodação, número de camas e hóspedes
-- **Página de detalhes** com galeria de fotos, descrição e comodidades
-- **Sistema de reservas** com seleção de datas
-- **Pagamento online** integrado via Stripe
-- **Avaliações** das acomodações
-
-### 🔐 Autenticação
-- Login com **Google** (OAuth)
-- Login com **e-mail e senha** (criptografados com bcrypt)
-- **Recuperação de senha** por e-mail (fluxo completo de reset)
-- **E-mail de boas-vindas** automático no cadastro
-
-### 🛠️ Painel Administrativo
-- **Controle de acesso por papéis (RBAC):** Super Admin, Admin e Visualizador
-- **Gerenciamento de acomodações:** criar, editar, excluir, upload de imagens
-- **Gerenciamento de reservas** e ocupação
-- **Gerenciamento de usuários** (ativação/desativação)
-- **Dashboard** com gráficos e taxa de ocupação
-
----
-
-## 🛠️ Tecnologias
-
-| Camada | Tecnologias |
-|--------|-------------|
-| **Frontend** | Next.js 13 (App Router), React, TypeScript, Tailwind CSS |
-| **CMS / Banco** | Sanity CMS (headless) |
-| **Autenticação** | NextAuth.js (Google OAuth + Credentials), bcrypt |
-| **Pagamentos** | Stripe |
-| **E-mails** | Resend |
-| **Hospedagem** | Vercel |
+- **Catálogo e busca** — listagem de acomodações com filtro dinâmico por tipo, camas e hóspedes
+- **Página de detalhes** — galeria de fotos, descrição completa e informações da acomodação
+- **Reservas com datas** — check-in/check-out com cálculo automático do valor e bloqueio de datas ocupadas
+- **Pagamento online** — cobrança integrada e segura via Stripe, com confirmação automática
+- **Autenticação** — login com Google (OAuth) ou e-mail e senha, com sessões seguras
+- **Painel administrativo** — gestão completa de acomodações, reservas, usuários e conteúdo
 
 ---
 
 ## 🏗️ Arquitetura
 
-### Visão Geral do Sistema
-
-```mermaid
-graph TD
-    A[Usuário / Hóspede] -->|navega| B[Frontend Next.js]
-    H[Administrador] -->|gerencia| B
-    B -->|consulta/grava dados| C[Sanity CMS]
-    B -->|autentica| D[NextAuth.js]
-    D -->|OAuth| E[Google]
-    B -->|processa pagamento| F[Stripe]
-    B -->|envia e-mails| G[Resend]
-
-    style B fill:#000000,color:#ffffff
-    style C fill:#F03E2F,color:#ffffff
-    style F fill:#635BFF,color:#ffffff
-    style D fill:#1a1814,color:#b8a06a
-```
-
-### Estrutura de Pastas
+Arquitetura **headless e desacoplada**: o frontend é independente do backend de dados, e cada serviço tem uma responsabilidade clara.
 
 ```
-src/
-├── app/
-│   ├── (web)/          # Site público (acomodações, auth, reservas)
-│   ├── (cms)/studio/   # Sanity Studio embutido
-│   ├── admin/          # Painel administrativo (RBAC)
-│   └── api/            # Rotas de backend (auth, stripe, rooms, admin)
-├── components/         # Componentes de UI reutilizáveis
-├── libs/               # Configurações e fonte única de verdade
-│   ├── sanity.ts       #   Cliente Sanity
-│   ├── auth.ts         #   Configuração NextAuth
-│   ├── roomTypes.ts    #   Tipos de acomodação + constantes (DRY)
-│   ├── sanityQueries.ts#   Queries GROQ centralizadas
-│   ├── stripe.ts       #   Configuração Stripe
-│   └── email.ts        #   Templates e envio de e-mails
-├── models/             # Tipos TypeScript do domínio
-└── schemas/            # Schemas do Sanity (hotelRoom, booking, user...)
+Usuário (HTTPS)
+      │
+      ▼
+Vercel CDN ──► Next.js App ──► API Routes ──► Serviços integrados
+ (edge global)  (SSR/SSG/CSR)  (regras de       ├─ Sanity CMS  (conteúdo das acomodações)
+                                negócio)         ├─ NextAuth    (sessões e login)
+                                                 └─ Stripe      (pagamentos e webhooks)
 ```
-
-> **Destaque de arquitetura:** O arquivo `roomTypes.ts` funciona como **fonte única de verdade** para os tipos de acomodação e constantes padrão. O schema do Sanity, a API e o painel admin importam dele, eliminando divergências e duplicação (princípio DRY).
 
 ---
 
-## 📸 Screenshots
+## 🛠️ Tecnologias
 
-<div align="center">
-
-### 🏠 Página Inicial
-<!-- Adicione o print da home aqui -->
-`[ Adicione aqui: screenshot da home ]`
-
-### 🔍 Catálogo de Acomodações
-<!-- Adicione o print do catálogo aqui -->
-`[ Adicione aqui: screenshot do catálogo com busca ]`
-
-### 🛏️ Detalhes da Acomodação
-<!-- Adicione o print da página de detalhes aqui -->
-`[ Adicione aqui: screenshot da página de detalhes ]`
-
-### 🛠️ Painel Administrativo
-<!-- Adicione o print do admin aqui -->
-`[ Adicione aqui: screenshot do painel admin ]`
-
-</div>
-
-> **Como adicionar screenshots:** Crie uma pasta `docs/screenshots/` no repositório, coloque as imagens lá e referencie com `![Descrição](docs/screenshots/nome-do-arquivo.png)`.
+| Tecnologia | Função |
+|------------|--------|
+| **Next.js 13** | Framework React com renderização híbrida (SSR/SSG/CSR) e API Routes |
+| **TypeScript** | Tipagem estática para mais segurança e manutenção |
+| **Sanity CMS** | Gerenciamento de conteúdo headless das acomodações |
+| **NextAuth.js + bcrypt** | Autenticação via Google OAuth e e-mail/senha com hash de senhas |
+| **Stripe** | Processamento de pagamentos (certificação PCI DSS) e webhooks |
+| **Vercel** | Deploy contínuo, CDN global e escalabilidade automática |
+| **Git + GitHub** | Versionamento e colaboração |
 
 ---
 
-## 🚀 Como Rodar Localmente
+## 🚀 Como rodar localmente
 
 ### Pré-requisitos
-- [Node.js](https://nodejs.org/) (versão 18 ou superior)
-- npm ou yarn
-- Conta no [Sanity](https://www.sanity.io/), [Stripe](https://stripe.com/) e [Resend](https://resend.com/)
+- Node.js 18+ e npm
+- Contas em: [Sanity](https://www.sanity.io/), [Stripe](https://stripe.com/) (modo teste) e [Google Cloud Console](https://console.cloud.google.com/) (OAuth)
 
-### Passo a passo
+### Passos
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/kcolive/meu-hotel-ypua.git
+git clone https://github.com/micheldavibusquet/villa-daniella.git
+cd villa-daniella
 
-# 2. Entre na pasta do projeto
-cd meu-hotel-ypua
+# 2. Instale as dependências
+npm install
 
-# 3. Instale as dependências
-npm install --legacy-peer-deps
+# 3. Configure as variáveis de ambiente
+# Crie um arquivo .env.local na raiz (veja a seção abaixo)
 
-# 4. Configure as variáveis de ambiente
-#    (crie um arquivo .env.local — veja a seção abaixo)
-
-# 5. Rode o servidor de desenvolvimento
+# 4. Rode em modo de desenvolvimento
 npm run dev
 ```
 
-O projeto estará disponível em **http://localhost:3000**
-O Sanity Studio estará em **http://localhost:3000/studio**
+Acesse [http://localhost:3000](http://localhost:3000).
 
-> ⚠️ **Nota:** Usamos `--legacy-peer-deps` devido a conflitos de dependência entre versões do `@sanity/client`. É esperado e não afeta o funcionamento.
+### Variáveis de ambiente
 
----
-
-## 🔐 Variáveis de Ambiente
-
-Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+Crie um arquivo `.env.local` na raiz do projeto com:
 
 ```env
 # Sanity
@@ -190,7 +100,7 @@ NEXT_PUBLIC_SANITY_DATASET=production
 SANITY_API_TOKEN=seu_token
 
 # NextAuth
-NEXTAUTH_SECRET=sua_chave_secreta
+NEXTAUTH_SECRET=sua_string_aleatoria
 NEXTAUTH_URL=http://localhost:3000
 
 # Google OAuth
@@ -198,53 +108,58 @@ GOOGLE_CLIENT_ID=seu_client_id
 GOOGLE_CLIENT_SECRET=seu_client_secret
 
 # Stripe
-STRIPE_SECRET_KEY=sua_chave_stripe
-STRIPE_WEBHOOK_SECRET=seu_webhook_secret
-
-# Resend (e-mails)
-RESEND_API_KEY=sua_chave_resend
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-> 🔒 **Segurança:** O arquivo `.env.local` está no `.gitignore` e **nunca** deve ser commitado. Chaves de API são sensíveis e não podem ir para o repositório.
+> ⚠️ **Nunca** comite o arquivo `.env.local`. Confirme que ele está listado no `.gitignore`.
+
+> 💡 Para testar webhooks do Stripe localmente, use a [Stripe CLI](https://stripe.com/docs/stripe-cli):
+> ```bash
+> stripe listen --forward-to localhost:3000/api/webhooks/stripe
+> ```
+> O `whsec_...` exibido pela CLI vai na variável `STRIPE_WEBHOOK_SECRET`.
 
 ---
 
-## 👥 Equipe
+## ✅ Qualidade e segurança
 
-Projeto desenvolvido de forma colaborativa por:
-
-| Integrante | Função |
-|------------|--------|
-| **Karen Cruz de Oliveira** | Desenvolvedora Fullstack |
-| **Michel Davi Busquet de Sousa** | Desenvolvedor Fullstack |
-| **Guilherme Nardi Matos** | Desenvolvedor Fullstack |
-| **Gustavo Santana Jacinto** | Desenvolvedor Fullstack |
+- **Testes:** 8 casos funcionais planejados, 8 aprovados, 0 reprovações
+- **Bloqueio automático de datas** validado — zero sobreposição de reservas
+- **Senhas** com hash bcrypt (nunca em texto puro)
+- **HTTPS** em toda a comunicação
+- **Painel restrito** a administradores autenticados
+- **Dados de cartão** nunca passam pelo servidor (processados diretamente pelo Stripe)
 
 ---
 
-## 🎓 Contexto Acadêmico
+## 🗺️ Roadmap
 
-Este projeto foi desenvolvido como **Projeto Aplicado** do curso de **Análise e Desenvolvimento de Sistemas (ADS)** do **UniSENAI Florianópolis**.
+Próximos passos guiados pelo feedback do cliente:
 
-O objetivo foi aplicar, em um cenário realista de negócio, os conhecimentos de:
-- Desenvolvimento web fullstack moderno
-- Arquitetura de aplicações
-- Integração com serviços externos (pagamentos, autenticação, e-mail)
-- Trabalho colaborativo com Git/GitHub (branches, Pull Requests, code review)
-- Boas práticas de código (tipagem, DRY, separação de responsabilidades)
+- [ ] Busca simplificada no padrão Airbnb/Booking (check-in, check-out, nº de hóspedes, tipo)
+- [ ] Páginas de acomodação mais completas (amenidades e regras da casa)
+- [ ] Páginas de marca e destino (Sobre, Galeria, Experiências, Localização, FAQ)
+- [ ] Integração com PMS / Channel Manager (sincronizar calendário e tarifas com Airbnb e Booking)
+
+---
+
+## 👥 Créditos
+
+Projeto originalmente desenvolvido em equipe como trabalho final do **Projeto Aplicado IV** — curso de Desenvolvimento de Sistemas, **UniSENAI Florianópolis**:
+
+- **Karen Cruz** — Fullstack Developer
+- **Michel Busquet** — Fullstack Developer
+- **Guilherme Nardi** — Fullstack Developer
+- **Gustavo Santana** — UX/UI Designer
+
+Repositório original da equipe: [github.com/kcolive/meu-hotel-ypua](https://github.com/kcolive/meu-hotel-ypua)
+
+Este fork é uma **continuação pessoal** mantida por [Michel Busquet](https://github.com/micheldavibusquet), com novas funcionalidades e evolução contínua a partir da base construída em conjunto.
 
 ---
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido para fins **acadêmicos e educacionais** no contexto do UniSENAI.
-
----
-
-<div align="center">
-
-**🏖️ Villa Daniella Beach Homes**
-
-*Desenvolvido com dedicação por estudantes de ADS — UniSENAI Florianópolis*
-
-</div>
+Projeto acadêmico. Consulte os autores antes de uso comercial.
